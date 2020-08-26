@@ -1,22 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
+using ChatProject.Services;
+using ChatProject.ServicesClasses;
 
 namespace ChatProject
 {
     public class Startup
     {
-
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
         public void ConfigureServices(IServiceCollection services)
         {
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<ChatContext>(options => options.UseSqlServer(connection).EnableSensitiveDataLogging());
+            services.AddScoped<DbInitializer>();
+            services.AddScoped<DbColumnsInitializer>();
+
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
