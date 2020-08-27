@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using ChatProject.Services;
 using ChatProject.ServicesClasses;
+using ChatProject.Hubs;
 
 namespace ChatProject
 {
@@ -26,6 +27,8 @@ namespace ChatProject
             services.AddScoped<DbColumnsInitializer>();
 
             services.AddControllers();
+            services.AddSignalR();
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
@@ -52,6 +55,7 @@ namespace ChatProject
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat/{id?}");
             });
 
             app.UseSpa(spa =>
