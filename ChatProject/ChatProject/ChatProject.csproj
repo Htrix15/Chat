@@ -28,6 +28,21 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TypeScriptCompile Remove="ClientApp\src\app\components\chat\chat.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\chat\chat.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\create\create.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\create\create.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\error\error.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\error\error.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\search\search.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\components\search\search.component.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientApp\src\app\routing\" />
+  </ItemGroup>
+
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
