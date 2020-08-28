@@ -13,14 +13,14 @@ namespace ChatProject.ServicesClasses
     public class ChatContext : DbContext, IDb
     {
         private readonly DbColumnsInitializer _dbColumnsInitializer;
-        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatGroup> ChatGroups { get; set; }
         public ChatContext(DbContextOptions<ChatContext> options, DbColumnsInitializer dbColumnsInitializer) : base(options)
         {
             _dbColumnsInitializer = dbColumnsInitializer;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            _dbColumnsInitializer.DefaultValuesInitializ(new ChatRoom(), modelBuilder);
+            _dbColumnsInitializer.DefaultValuesInitializ(new ChatGroup(), modelBuilder);
         }
 
         public bool CreateDb()
@@ -59,7 +59,7 @@ namespace ChatProject.ServicesClasses
             }
             catch
             {
-                result.error = "Fail set data of DB";
+                result.AddError("Fail set data of DB");
             }
             return result;
         }

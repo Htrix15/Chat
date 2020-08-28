@@ -25,6 +25,8 @@ namespace ChatProject
             services.AddDbContext<ChatContext>(options => options.UseSqlServer(connection).EnableSensitiveDataLogging());
             services.AddScoped<DbInitializer>();
             services.AddScoped<DbColumnsInitializer>();
+            services.AddScoped<ValidateRequest>();
+            services.AddScoped<ChatOperations>();
 
             services.AddControllers();
             services.AddSignalR();
@@ -55,7 +57,7 @@ namespace ChatProject
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>("/chat/{id?}");
+                endpoints.MapHub<ChatHub>("/chat/{id}");
             });
 
             app.UseSpa(spa =>
