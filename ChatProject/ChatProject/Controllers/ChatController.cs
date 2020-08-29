@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using ChatProject.Models;
 using ChatProject.Interfaces;
-using ChatProject.ServicesClasses;
 using ChatProject.Services;
 using ChatProject.RequestValidators;
 using ChatProject.RequestValidators.Rules;
@@ -29,16 +28,17 @@ namespace ChatProject.Controllers
             _chatOperations = chatOperations;
         } 
 
-
-        [HttpGet("check-group")]
-        public async Task<IActionResult> CheckGroupAsync()
+        [HttpGet("check-group-and-nick")]
+        public async Task<IActionResult> CheckGroupAndNickAsync()
         {
             var result = await _validateRequest
                 .ValidateAsync(
                     Request.Query, 
                     new MyValidator(
                         new ContainsKey("groupName"), 
-                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName")
+                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
+                        new ContainsKey("nick"), 
+                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
                         ), 
                     _chatOperations.CheckGroupAsync);
             if(result.CheckNotError()){

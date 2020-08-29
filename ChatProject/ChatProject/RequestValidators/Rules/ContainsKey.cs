@@ -15,7 +15,7 @@ namespace ChatProject.RequestValidators.Rules
             if(requestParams.ContainsKey(key)){
                 return null;
             }
-            else return "query key not found";
+            else return $"query key {key} not found";
         }
     }
 }

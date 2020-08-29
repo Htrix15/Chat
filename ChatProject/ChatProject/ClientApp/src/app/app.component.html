@@ -7,12 +7,20 @@
 
 <form 
 [formGroup] = inputChatNameForm 
-(ngSubmit)="checkChat()">
+>
     <label>Введите ид чата</label>
     <input type="text" formControlName="chatName">
+   
+</form>
+<!-- <input type="submit" value="Подключится"> -->
+
+<form 
+[formGroup] = inputNickForm
+(ngSubmit)="connectToChat()">
+    <label>Введите ник</label>
+    <input type="text" formControlName="nick">
     <input type="submit" value="Подключится">
 </form>
-
 
 <ng-container *ngIf="privateChat">
 

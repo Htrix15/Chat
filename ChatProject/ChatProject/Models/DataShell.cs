@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using ChatProject.Interfaces;
 
-namespace ChatProject.ServicesClasses
+namespace ChatProject.Models
 {
     public class DataShell
     {

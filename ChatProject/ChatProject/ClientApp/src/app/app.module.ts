@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule} from './routing/app-routing.module'
 import { HttpClientModule } from '@angular/common/http';
 import { DataService } from './services/data.service'
+import { ChatingService} from './services/chating.service'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
   ],
   providers: [
-    DataService
+    DataService,
+    ChatingService
   ],
   bootstrap: [AppComponent]
 })

@@ -3,7 +3,7 @@ using ChatProject.ServicesClasses;
 using ChatProject.Interfaces;
 using System;
 using System.Threading.Tasks;
-
+using ChatProject.Models;
 namespace ChatProject.Services
 {
     public class ValidateRequest

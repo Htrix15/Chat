@@ -3,7 +3,7 @@ using ChatProject.ServicesClasses;
 using Microsoft.AspNetCore.Http;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-
+using ChatProject.Models;
 namespace ChatProject.RequestValidators
 {
     public class MyValidator: IValidator

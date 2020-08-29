@@ -5,7 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ChatGroup } from './models/chat-group';
 import { Router } from '@angular/router';
-
+import { ChatingService } from './services/chating.service';
+import { TypeChecker} from './services-classes/type-checker'
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,16 +16,19 @@ export class AppComponent implements OnInit {
   title = 'ClientApp';
 
   public inputChatNameForm: FormGroup;
+  public inputNickForm: FormGroup;
   public inputPasswordForm: FormGroup;
 
   public chatName: string;
+  public nick: string;
   public privateChat: boolean;
 
   public chatGroup: ChatGroup;
 
   constructor(
     private dataService:DataService, 
-    private router: Router){
+    private router: Router,
+    private chatingService: ChatingService){
       this.inputChatNameForm = new FormGroup({
         chatName: new FormControl(null)
     });
@@ -33,27 +37,37 @@ export class AppComponent implements OnInit {
       password: new FormControl(null)
     });
 
+    this.inputNickForm = new FormGroup({
+      nick: new FormControl(null)
+    });
+
     this.privateChat = false;
   }
 
   ngOnInit(): void {
-   
   }
 
-  checkChat(): void{
+  connectToChat(): void{
+
     let chatName = this.inputChatNameForm.controls['chatName']?.value;
-    if(chatName && this.valueIsString(chatName)){
+    this.nick = this.inputNickForm.controls['nick']?.value;
+    if(chatName && TypeChecker.checkType<string>(chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
       this.dataService
-      .getUserDatas('check-group', new Map<string, string>().set('groupName', chatName))
+      .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', chatName).set('nick', this.nick))
       .subscribe(
         (chatGroup: DataShell) => {
-          if(chatGroup.data && this.dataIsChatGroup(chatGroup.data)){
+        if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
             this.chatGroup = chatGroup.data;
             if(this.chatGroup.Private){
               this.privateChat = true;
-            } else
-            {
-              this.router.navigate(['/chat',this.chatGroup.Id])
+            } else{
+              this.chatingService
+              .connectToChat(this.chatGroup.Name, this.nick)
+              .subscribe(
+                () => {
+                  console.log('connection success');
+                  this.router.navigate(['/chat',this.chatGroup.Id])},
+                () => console.log('connection failed'))
             }
           }
         }, 
@@ -63,37 +77,27 @@ export class AppComponent implements OnInit {
 
   checkPassword(): void{
     let password = this.inputPasswordForm.controls['password']?.value;
-    if(password && this.valueIsString(password)){
+    if(password && TypeChecker.checkType<string>(password, 'length')){
       this.chatGroup.Password = password;
       this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
         () => {
-          this.router.navigate(['/chat',this.chatGroup.Id])
+          this.chatingService
+          .connectToChat(this.chatGroup.Name, this.nick)
+          .subscribe(
+            () => {
+              console.log('connection success');
+              this.router.navigate(['/chat',this.chatGroup.Id])},
+            () => console.log('connection failed'))
         }, 
         (err: HttpErrorResponse) => this.parsError(err)
       );
     }
   }
-
-  private dataIsChatGroup(data: any): data is ChatGroup {
-    return (<ChatGroup>data).Private !== void 0;
-  }
-
-  private valueIsString(value: any): value is string {
-    return (<string>value).length !== void 0;
-  }
-
-  private errorIsDataShell(error: any): error is DataShell {
-    return (<DataShell>error).result !== void 0;
-  }
-
   parsError(error: HttpErrorResponse):void{
-    if(this.errorIsDataShell(error.error)){
+    if(TypeChecker.checkType<DataShell>(error.error, 'result')){
       console.warn(error.error.errors);
     } else {
       console.error('что-то пошло не так');
     }
-  }
-
- 
-    
+  } 
 }

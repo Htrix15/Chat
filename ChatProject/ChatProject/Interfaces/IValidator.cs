@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using ChatProject.ServicesClasses;
-
+using ChatProject.Models;
 namespace ChatProject.Interfaces
 {
     public interface IValidator

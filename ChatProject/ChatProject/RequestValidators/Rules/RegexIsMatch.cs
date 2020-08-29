@@ -19,7 +19,7 @@ namespace ChatProject.RequestValidators.Rules
             if(regFormat.IsMatch(requestParams[key].ToString())){
                 return null;
             }
-            else return "invalid format value";
+            else return $"{key} there is invalid format";
         }
     }
 }

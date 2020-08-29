@@ -57,7 +57,7 @@ namespace ChatProject
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>("/chat/{id}");
+                endpoints.MapHub<ChatHub>("/chat/{id}/{name}");
             });
 
             app.UseSpa(spa =>
