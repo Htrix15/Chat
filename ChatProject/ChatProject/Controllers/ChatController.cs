@@ -47,6 +47,25 @@ namespace ChatProject.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("check-nick")]
+        public async Task<IActionResult> CheckNickAsync()
+        {
+            var result = await _validateRequest
+                .ValidateAsync(
+                    Request.Query, 
+                    new MyValidator(
+                        new ContainsKey("nick"), 
+                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
+                        ), 
+                    _chatOperations.CheckNickAsync);
+            if(result.CheckNotError()){
+                return Ok();
+            }
+            return BadRequest(result);
+        }
+
+
+
         [HttpPost("check-password")]
         public async Task<IActionResult> CheckPasswordAsync(ChatGroup chatGroup){
             var result = await _validateRequest
@@ -57,7 +76,18 @@ namespace ChatProject.Controllers
                 return Ok(JsonConvert.SerializeObject(result));
             }
             return BadRequest(result);
+        }
 
+        [HttpPost("create-chat")]
+        public async Task<IActionResult> CreateChatAsync(ChatGroup chatGroup){
+            var result = await _validateRequest
+                .ValidateAsync(
+                    chatGroup,
+                    _chatOperations.AddChatGroupAsync);
+            if(result.CheckNotError()){
+                return Ok(JsonConvert.SerializeObject(result));
+            }
+            return BadRequest(result);
         }
     }
 }

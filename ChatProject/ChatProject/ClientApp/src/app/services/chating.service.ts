@@ -12,6 +12,13 @@ export class ChatingService {
   private hubConnection: HubConnection;
   constructor() { }
 
+  checkChat():boolean{
+    if(this.hubConnection){
+      return true;
+    }
+    return false;
+  }
+
   connectToChat(chatId:string, nick:string):Observable<boolean>{
     return new Observable<boolean>(
       sub => {

@@ -93,6 +93,7 @@ export class AppComponent implements OnInit {
       );
     }
   }
+  
   parsError(error: HttpErrorResponse):void{
     if(TypeChecker.checkType<DataShell>(error.error, 'result')){
       console.warn(error.error.errors);

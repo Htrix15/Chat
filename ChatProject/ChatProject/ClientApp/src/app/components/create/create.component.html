@@ -1,1 +1,17 @@
 <h2>Create chat</h2>
+
+<form 
+[formGroup] = inputChatOptions
+(ngSubmit) = "createChat()"
+>
+
+    <label>Ваш ник</label>
+    <input type="text" formControlName="nick">
+    <ng-container *ngIf="chatNotCreated">
+        <label>Название чата</label>
+        <input type="text" formControlName="chatName">
+        <label>Пароль (если хотите чтобы чат был приватный)</label>
+        <input type="password" formControlName="password">
+    </ng-container>
+    <input type="submit" value="Создать и подключится">
+</form>

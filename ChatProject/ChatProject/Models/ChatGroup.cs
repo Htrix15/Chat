@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using ChatProject.ServicesClasses;
+using System.Text.RegularExpressions;
 
 namespace ChatProject.Models
 {
@@ -26,7 +27,11 @@ namespace ChatProject.Models
         }
 
        public DataShell Validate(){
-            if(this.Password.Length>25){
+            var regFormat = new Regex(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", RegexOptions.Compiled | RegexOptions.Singleline);
+            if(!regFormat.IsMatch(Name)){
+                return new DataShell("chat name isn't valid");
+            }
+            if(Private && Password.Length>25){
                return new DataShell("password there is invalid length");
             }
             return new DataShell();    

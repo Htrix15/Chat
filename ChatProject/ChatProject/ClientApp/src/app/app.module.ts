@@ -6,7 +6,7 @@ import { AppRoutingModule} from './routing/app-routing.module'
 import { HttpClientModule } from '@angular/common/http';
 import { DataService } from './services/data.service'
 import { ChatingService} from './services/chating.service'
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule} from './modules/shared.module'
 @NgModule({
   declarations: [
     AppComponent
@@ -15,8 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
+    SharedModule
   ],
   providers: [
     DataService,

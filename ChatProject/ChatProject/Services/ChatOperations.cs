@@ -52,5 +52,34 @@ namespace ChatProject.Services
     
             return result;   
         }
+        public virtual async Task<DataShell> CheckNickAsync(IQueryCollection requestParams){
+            return new DataShell();
+        }
+        public virtual async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
+        {  
+            var result = new DataShell();
+            var _chatGroup =  chatGroup as ChatGroup;
+            var newChatGroup = new ChatGroup(){
+                Name = _chatGroup.Name,
+                Private = _chatGroup.Private,
+                Password = _chatGroup.Password
+            };
+            
+            var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup>(
+                predicate: _ => _.Name == _chatGroup.Name , 
+                take: 1)).FirstOrDefault();
+            if(foundChatGroup!=null){
+                result.AddError("Chat name is't unique");
+                return result;
+            }
+
+            result = await _db.InsertAsync<ChatGroup>(newChatGroup);
+            if(result.CheckNotError()){
+                newChatGroup.Password = null;
+                result.data = newChatGroup;
+            }
+
+            return result;   
+        }
     }
 }
