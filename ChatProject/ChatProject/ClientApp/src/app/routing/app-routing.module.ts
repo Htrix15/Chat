@@ -5,6 +5,7 @@ import { ChatComponent } from '../components/chat/chat.component';
 import { CreateComponent } from '../components/create/create.component';
 import { SearchComponent } from '../components/search/search.component';
 import { ErrorComponent } from '../components/error/error.component';
+import { ConnectComponent } from '../components/connect/connect.component';
 
 import {ConnectToChatGuard} from '../guards/connect-to-chat.guard'
 import { SharedModule } from '../modules/shared.module';
@@ -13,7 +14,10 @@ const routes: Routes = [
     {
         path: '',  children:[
             {
-                path: '', component: CreateComponent
+                path: '', component: ConnectComponent
+            },
+            {
+                path: 'connect', component: ConnectComponent
             },
             {
                 path: 'chat/:id', component: ChatComponent, canActivate: [ConnectToChatGuard]            
@@ -35,6 +39,7 @@ const routes: Routes = [
 ]
 @NgModule({
     declarations: [ 
+        ConnectComponent,
         ChatComponent,
         CreateComponent,
         SearchComponent,

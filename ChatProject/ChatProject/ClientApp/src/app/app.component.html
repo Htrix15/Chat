@@ -1,37 +1,7 @@
 <h1><a [routerLink]="['']">ГО В ЧАТ</a> </h1>
 
+<a [routerLink]="[ '/connect']">Connect</a> 
 <a [routerLink]="[ '/create']">Create</a> 
 <a [routerLink]="[ '/search']">Search</a> 
-
-<p>Подключится к чату</p>
-
-<form 
-[formGroup] = inputChatNameForm 
->
-    <label>Введите ид чата</label>
-    <input type="text" formControlName="chatName">
-   
-</form>
-<!-- <input type="submit" value="Подключится"> -->
-
-<form 
-[formGroup] = inputNickForm
-(ngSubmit)="connectToChat()">
-    <label>Введите ник</label>
-    <input type="text" formControlName="nick">
-    <input type="submit" value="Подключится">
-</form>
-
-<ng-container *ngIf="privateChat">
-
-    <form 
-    [formGroup] = inputPasswordForm
-    (ngSubmit) = "checkPassword()">
-        <label>Введите пароль от чата</label>
-        <input type="password" formControlName="password">
-        <input type="submit" value="Подключится">
-    </form> 
-
-</ng-container>
 
 <router-outlet></router-outlet>
