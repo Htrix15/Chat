@@ -7,7 +7,6 @@ import { ChatGroup } from '../../models/chat-group';
 import { Router } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
-import { isDate, isBoolean } from 'util';
 
 @Component({
     selector: 'app-create',
@@ -26,7 +25,6 @@ export class CreateComponent {
 
     constructor(
         private dataService:DataService, 
-        private router: Router,
         private chatingService: ChatingService){
           this.inputChatOptions = new FormGroup({
             nick: new FormControl(null),
@@ -37,87 +35,68 @@ export class CreateComponent {
     }
 
     createChat():void{
+
         this.chatName = this.inputChatOptions.controls['chatName']?.value;
         this.nick = this.inputChatOptions.controls['nick']?.value;
         this.password = this.inputChatOptions.controls['password']?.value;
+
         if(this.chatNotCreated){
             if(this.chatName && this.nick &&
-                TypeChecker.checkType<string>(this.chatName, 'length') &&
-                TypeChecker.checkType<string>(this.nick, 'length')){
+            TypeChecker.checkType<string>(this.chatName, 'length') &&
+            TypeChecker.checkType<string>(this.nick, 'length')){
+                
                 let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
-                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, new Date(), new Date())
+                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, new Date(), new Date())  
+                
                 this.dataService.postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
                     (chatGroup:DataShell)=>{
                         if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
                             this.chatNotCreated = false;
                             this.chatGroup = chatGroup.data;
-                            this.dataService
-                            .getUserDatas('check-nick', new Map<string, string>().set('nick', this.nick))
-                            .subscribe(
-                                ()=>{
-                                    if(!this.chatGroup.Private){
-                                        this.chatingService
-                                        .connectToChat(this.chatName, this.nick)
-                                        .subscribe(
-                                        () => {
-                                            console.log('connection success');
-                                            this.router.navigate(['/chat',this.chatGroup.Id])},
-                                        () => console.log('connection failed'))
-                                    } else {
-                                        this.chatGroup.Password = this.password;
-                                        this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
-                                            () => {
-                                              this.chatingService
-                                              .connectToChat(this.chatName, this.nick)
-                                              .subscribe(
-                                                () => {
-                                                    console.log('connection success');
-                                                    this.router.navigate(['/chat',this.chatGroup.Id])},
-                                                () => console.log('connection failed'))
-                                            }, 
-                                            (err: HttpErrorResponse) => this.parsError(err)
-                                          );
-                                    }
-                                },
-                                (err: HttpErrorResponse) => this.parsError(err)
-                            );        
+                            this.checkNick(this.chatGroup, this.nick, this.password);
                         }
                     },
                     (err: HttpErrorResponse) => this.parsError(err)
                 );
             } 
         } else {
+            this.checkNick(this.chatGroup, this.nick, this.password);
+        }
+    }
+
+    checkNick(chatGroup:ChatGroup, 
+        nick:string, 
+        password: string, 
+        ){
             this.dataService
-            .getUserDatas('check-nick', new Map<string, string>().set('nick', this.nick))
+            .getUserDatas('check-nick', new Map<string, string>().set('nick', nick))
             .subscribe(
                 ()=>{
-                    if(!this.chatGroup.Private){
-                        this.chatingService
-                        .connectToChat(this.chatName, this.nick)
-                        .subscribe(
-                        () => {
-                            console.log('connection success');
-                            this.router.navigate(['/chat',this.chatGroup.Id])},
-                        () => console.log('connection failed'))
-                    } else {
-                        this.chatGroup.Password = this.password;
-                        this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
-                            () => {
-                              this.chatingService
-                              .connectToChat(this.chatName, this.nick)
-                              .subscribe(
-                                () => {
-                                    console.log('connection success');
-                                    this.router.navigate(['/chat',this.chatGroup.Id])},
-                                () => console.log('connection failed'))
-                            }, 
-                            (err: HttpErrorResponse) => this.parsError(err)
-                          );
-                    }
+                    console.log('!', this);
+                    this.connectionPreparation(chatGroup, nick, password);
                 },
                 (err: HttpErrorResponse) => this.parsError(err)
             );  
-        }
+    }
+
+    connectionPreparation(chatGroup:ChatGroup, 
+        nick:string, 
+        password: string
+        ){
+            if(!chatGroup.Private){
+                console.log('!', this);
+                this.chatingService
+                .connectToChat(chatGroup.Id.toString(), nick);
+            } else {
+                chatGroup.Password = password;
+                this.dataService.postUserDatas<ChatGroup, DataShell>(chatGroup, 'check-password').subscribe(
+                    () => {
+                    this.chatingService
+                    .connectToChat(chatGroup.Id.toString(), nick);
+                    }, 
+                    (err: HttpErrorResponse) => this.parsError(err)
+                );
+            }
     }
 
     parsError(error: HttpErrorResponse):void{
@@ -126,5 +105,5 @@ export class CreateComponent {
         } else {
           console.error('что-то пошло не так');
         }
-      } 
+    } 
 }

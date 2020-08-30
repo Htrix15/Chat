@@ -3,6 +3,7 @@ import {HubConnection, HubConnectionBuilder} from '@aspnet/signalr'
 import { Observable } from 'rxjs';
 import { ChatMessage } from '../models/chat-message'
 import { TypeChecker } from '../services-classes/type-checker'
+import { Router } from '@angular/router';
 
 @Injectable()
 
@@ -10,7 +11,7 @@ import { TypeChecker } from '../services-classes/type-checker'
 export class ChatingService {
 
   private hubConnection: HubConnection;
-  constructor() { }
+  constructor( private router: Router,) { }
 
   checkChat():boolean{
     if(this.hubConnection){
@@ -19,8 +20,8 @@ export class ChatingService {
     return false;
   }
 
-  connectToChat(chatId:string, nick:string):Observable<boolean>{
-    return new Observable<boolean>(
+  connectToChat(chatId:string, nick:string):void{
+    new Observable<boolean>(
       sub => {
         this.hubConnection = new HubConnectionBuilder()
         .withUrl(`/chat/${chatId}/${nick}`).build(); 
@@ -35,8 +36,31 @@ export class ChatingService {
             )
         .catch(()=>sub.error(false));
       }
-    )
+    ).subscribe(
+      () => {
+          console.log('connection success');
+          this.router.navigate(['/chat',chatId])},
+      () => console.log('connection failed'))
   }
+
+  // connectToChat(chatId:string, nick:string):Observable<boolean>{
+  //   return new Observable<boolean>(
+  //     sub => {
+  //       this.hubConnection = new HubConnectionBuilder()
+  //       .withUrl(`/chat/${chatId}/${nick}`).build(); 
+
+  //       this.hubConnection.start()
+  //       .then(() => {
+  //           this.hubConnection
+  //               .invoke('AddingUserToGroup')
+  //               .then(()=>sub.next(true))
+  //               .catch(()=>sub.error(false));
+  //             }
+  //           )
+  //       .catch(()=>sub.error(false));
+  //     }
+  //   )
+  // }
 
   listeningChat():Observable<ChatMessage>{
     return new Observable<ChatMessage>(
@@ -58,5 +82,7 @@ export class ChatingService {
         .catch(()=>sub.error(false));}
       )
   }
+
+
 
 }

@@ -62,12 +62,7 @@ export class ConnectComponent implements OnInit {
               this.privateChat = true;
             } else{
               this.chatingService
-              .connectToChat(this.chatGroup.Name, this.nick)
-              .subscribe(
-                () => {
-                  console.log('connection success');
-                  this.router.navigate(['/chat',this.chatGroup.Id])},
-                () => console.log('connection failed'))
+              .connectToChat(this.chatGroup.Id.toString(), this.nick);
             }
           }
         }, 
@@ -82,12 +77,7 @@ export class ConnectComponent implements OnInit {
       this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
         () => {
           this.chatingService
-          .connectToChat(this.chatGroup.Name, this.nick)
-          .subscribe(
-            () => {
-              console.log('connection success');
-              this.router.navigate(['/chat',this.chatGroup.Id])},
-            () => console.log('connection failed'))
+          .connectToChat(this.chatGroup.Id.toString(), this.nick);
         }, 
         (err: HttpErrorResponse) => this.parsError(err)
       );
