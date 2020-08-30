@@ -1,1 +1,14 @@
 <h2>Search Chat</h2>
+
+<form 
+[formGroup] = searchForm
+(ngSubmit)="startSearch()">
+    <label>Введите название чата</label>
+    <input type="text" formControlName="groupName">
+    <input type="submit" value="поиск">
+</form>
+
+<ng-container *ngFor="let chatGroup of chatGroups">
+    <a [routerLink]="[ '/connect']" [queryParams]="{cg: chatGroup.Name}"> {{chatGroup.Name}}</a> 
+</ng-container>
+

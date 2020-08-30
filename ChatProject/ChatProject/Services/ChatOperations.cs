@@ -52,8 +52,18 @@ namespace ChatProject.Services
     
             return result;   
         }
-        public virtual async Task<DataShell> CheckNickAsync(IQueryCollection requestParams){
-            return new DataShell();
+        public virtual async Task<DataShell> SearchChatsAsync(IQueryCollection requestParams){
+            var result = new DataShell();
+            var searchGroupName = requestParams["groupName"].ToString();
+
+            result.datas = await _db.SelectAsync<ChatGroup, ChatGroup>(
+                predicate: _ => _.Name.Contains(searchGroupName),
+                selector: _ => new ChatGroup(){Id = _.Id, Name= _.Name, Private = _.Private }
+            );
+            if(result.datas == null || result.datas.Count()==0){
+                result.AddError("groups not found");
+            }
+            return result;
         }
         public virtual async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
         {  

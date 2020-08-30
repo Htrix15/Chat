@@ -20,6 +20,11 @@ namespace ChatProject.Services
                 return result;
             }
         }
+        public virtual DataShell Validate(IQueryCollection requestParams,IValidator validator)
+        {
+            var result = validator.Validate(requestParams);
+            return result;
+        }
 
         public virtual async Task<DataShell> ValidateAsync(IValidator validator, Func<IValidator, Task<DataShell>> dbMethod)
         {

@@ -48,23 +48,38 @@ namespace ChatProject.Controllers
         }
 
         [HttpGet("check-nick")]
-        public async Task<IActionResult> CheckNickAsync()
+        public IActionResult CheckNickAsync()
         {
-            var result = await _validateRequest
-                .ValidateAsync(
+            var result = _validateRequest
+                .Validate(
                     Request.Query, 
                     new MyValidator(
                         new ContainsKey("nick"), 
                         new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
-                        ), 
-                    _chatOperations.CheckNickAsync);
+                        )
+                    );
             if(result.CheckNotError()){
                 return Ok();
             }
             return BadRequest(result);
         }
 
-
+        [HttpGet("search-chats")]
+        public async Task<IActionResult> SearchChats()
+        {
+            var result = await _validateRequest
+                .ValidateAsync(
+                    Request.Query, 
+                    new MyValidator(
+                        new ContainsKey("groupName"), 
+                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName")
+                        ), 
+                    _chatOperations.SearchChatsAsync);
+            if(result.CheckNotError()){
+                return Ok(JsonConvert.SerializeObject(result));
+            }
+            return BadRequest(result);
+        }
 
         [HttpPost("check-password")]
         public async Task<IActionResult> CheckPasswordAsync(ChatGroup chatGroup){

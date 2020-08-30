@@ -4,7 +4,7 @@ import { DataShell } from '../../models/data-shell'
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ChatGroup } from '../../models/chat-group';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 
@@ -27,6 +27,7 @@ export class ConnectComponent implements OnInit {
 
   constructor(
     private dataService:DataService, 
+    private route: ActivatedRoute,
     private router: Router,
     private chatingService: ChatingService){
       this.inputChatNameForm = new FormGroup({
@@ -45,6 +46,11 @@ export class ConnectComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params =>{
+      if(params['cg']){
+       this.inputChatNameForm.controls['chatName'].setValue(params['cg']);
+      }
+    })
   }
 
   connectToChat(): void{
