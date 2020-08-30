@@ -33,9 +33,9 @@ namespace ChatProject.Hubs
             await Clients.GroupExcept(Group, Context.ConnectionId).SendAsync("SendToAll", new ChatMessage(){Nick =  UserName, Text = "вошел в чат"});
             await base.OnConnectedAsync();
         }
-
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Group);
             await Clients.Group(Group).SendAsync("SendToAll", new ChatMessage(){Nick =  UserName, Text = "покинул чат"});
             await base.OnDisconnectedAsync(exception);
         }

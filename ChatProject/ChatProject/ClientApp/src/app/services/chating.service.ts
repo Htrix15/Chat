@@ -42,25 +42,16 @@ export class ChatingService {
           this.router.navigate(['/chat',chatId])},
       () => console.log('connection failed'))
   }
-
-  // connectToChat(chatId:string, nick:string):Observable<boolean>{
-  //   return new Observable<boolean>(
-  //     sub => {
-  //       this.hubConnection = new HubConnectionBuilder()
-  //       .withUrl(`/chat/${chatId}/${nick}`).build(); 
-
-  //       this.hubConnection.start()
-  //       .then(() => {
-  //           this.hubConnection
-  //               .invoke('AddingUserToGroup')
-  //               .then(()=>sub.next(true))
-  //               .catch(()=>sub.error(false));
-  //             }
-  //           )
-  //       .catch(()=>sub.error(false));
-  //     }
-  //   )
-  // }
+  
+  disconnected():Observable<boolean>{
+    return new Observable<boolean>(
+      sub => {
+        this.hubConnection.stop() 
+        .then(this.hubConnection = null)
+        .then(()=>sub.next(true))
+        .catch(()=>sub.error(false));
+    })
+  }
 
   listeningChat():Observable<ChatMessage>{
     return new Observable<ChatMessage>(

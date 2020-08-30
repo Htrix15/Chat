@@ -25,7 +25,8 @@ export class ChatComponent implements OnInit {
             .listeningChat()
             .subscribe((message:ChatMessage)=>console.log(message.nick, message.text));
     }
-    
+
+
     onPush(): void {
         this.chatingService
         .pushMessage('new message')

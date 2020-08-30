@@ -8,6 +8,7 @@ import { ErrorComponent } from '../components/error/error.component';
 import { ConnectComponent } from '../components/connect/connect.component';
 
 import {ConnectToChatGuard} from '../guards/connect-to-chat.guard'
+import {AutoDisconnectedGuard} from '../guards/auto-disconnected.guard'
 import { SharedModule } from '../modules/shared.module';
 
 const routes: Routes = [
@@ -20,7 +21,7 @@ const routes: Routes = [
                 path: 'connect', component: ConnectComponent
             },
             {
-                path: 'chat/:id', component: ChatComponent, canActivate: [ConnectToChatGuard]            
+                path: 'chat/:id', component: ChatComponent, canActivate: [ConnectToChatGuard], canDeactivate: [AutoDisconnectedGuard]          
             },
             {
                 path: 'create', component: CreateComponent
@@ -46,7 +47,7 @@ const routes: Routes = [
         ErrorComponent 
     ],
     imports: [RouterModule.forRoot(routes),  SharedModule],
-    providers:[ConnectToChatGuard],
+    providers:[ConnectToChatGuard, AutoDisconnectedGuard],
     exports: [RouterModule]
   })
 export class AppRoutingModule { }
