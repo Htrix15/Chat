@@ -7,6 +7,7 @@ namespace ChatProject.Interfaces
 {
     public interface IValidateRules
     {
-        string Check(IQueryCollection requestParams);
+       string Check(IQueryCollection requestParams)=>"requestParams is invalid";
+       string Check(string requestParams)=>"string is invalid";
     }
 }

@@ -18,12 +18,22 @@ namespace ChatProject.RequestValidators
                 }
             }
         }
-        
         public DataShell Validate(IQueryCollection requestParams)
         {
             if(this.rules!=null){
                 foreach(var rule in this.rules){
                     var error = rule.Check(requestParams);
+                    if(error!=null){
+                        return new DataShell(error);
+                    }
+                }
+            }
+            return new DataShell();
+        }
+        public DataShell Validate(string value){
+              if(this.rules!=null){
+                foreach(var rule in this.rules){
+                    var error = rule.Check(value);
                     if(error!=null){
                         return new DataShell(error);
                     }

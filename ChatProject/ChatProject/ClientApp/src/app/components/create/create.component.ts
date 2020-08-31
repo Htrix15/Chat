@@ -46,7 +46,7 @@ export class CreateComponent {
             TypeChecker.checkType<string>(this.nick, 'length')){
                 
                 let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
-                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, new Date(), new Date())  
+                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, new Date())  
                 
                 this.dataService.postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
                     (chatGroup:DataShell)=>{

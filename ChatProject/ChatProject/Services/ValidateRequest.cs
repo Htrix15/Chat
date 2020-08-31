@@ -26,6 +26,18 @@ namespace ChatProject.Services
             return result;
         }
 
+        public virtual async Task<DataShell> ValidateAsync(string value, IValidator validator, Func<string, Task<DataShell>> dbMethod){
+            var result = validator.Validate(value);
+            if (result.CheckNotError())
+            {
+                return await dbMethod(value);
+            }
+            else
+            {
+                return result;
+            }
+        }
+
         public virtual async Task<DataShell> ValidateAsync(IValidator validator, Func<IValidator, Task<DataShell>> dbMethod)
         {
             var result = validator.Validate();

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -64,6 +65,33 @@ namespace ChatProject.Services
                 result.AddError("groups not found");
             }
             return result;
+        }
+
+        public virtual async Task<DataShell> IncrementUserCount(string id){
+            int chatId = Convert.ToInt32(id);
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup>(
+                predicate: _ => _.Id == chatId,
+                take: 1)).FirstOrDefault();
+            if(thisGroup!=null){
+                thisGroup.UserCount++;
+                await _db.UpdateAsync(thisGroup);
+            }
+            return new DataShell();
+        }
+        public virtual async Task<DataShell> DecrementUserCount(string id){
+            int chatId = Convert.ToInt32(id);
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup>(
+                predicate: _ => _.Id == chatId,
+                take: 1)).FirstOrDefault();
+            if(thisGroup!=null){
+                if(thisGroup.UserCount>1){
+                    thisGroup.UserCount--;
+                    await _db.UpdateAsync(thisGroup);
+                } else{
+                    await _db.DeleteAsync(thisGroup);
+                }
+            }
+            return new DataShell();
         }
         public virtual async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
         {  
