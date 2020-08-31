@@ -7,10 +7,10 @@ namespace ChatProject.RequestValidators.Rules
     public class StringIsInt: IValidateRules
     {
         public string Check(string value){
-            if(Int32.TryParse(value, out int outInt)){
+            if(Boolean.TryParse(value, out bool outBool)){
                 return null;
             }
-            return "string isn't number";
+            return "string isn't boolean";
         }
     }
 }

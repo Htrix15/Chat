@@ -72,7 +72,15 @@ namespace ChatProject.Controllers
                     Request.Query, 
                     new MyValidator(
                         new ContainsKey("groupName"), 
-                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName")
+                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
+                        new ContainsKey("onlyPublic"), 
+                        new IfContainsThenIsBool("onlyPublic"),
+                        new IfContainsThenMatch("order", "name","date","user-count","activity"),
+                        new IfContainsThenMatch("nextOrder", "name","date","user-count","activity"),
+                        new IfContainsThenContains("order","orderAsc"),
+                        new IfContainsThenContains("nextOrder","nextOrderAsc"),
+                        new IfContainsThenIsBool("orderAsc"),
+                        new IfContainsThenIsBool("nextOrderAsc")
                         ), 
                     _chatOperations.SearchChatsAsync);
             if(result.CheckNotError()){

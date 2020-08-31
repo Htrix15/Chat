@@ -3,8 +3,35 @@
 <form 
 [formGroup] = searchForm
 (ngSubmit)="startSearch()">
+
     <label>Введите название чата</label>
     <input type="text" formControlName="groupName">
+
+    <label>Исключить приватные</label>
+    <input type="checkbox" formControlName="onlyPublic">
+
+    <label>Сортировать по 1</label>
+    <select formControlName = "order">
+        <option value="name"> Имя</option>
+        <option value="date">Дата</option>
+        <option value="user-count">Кол-во пользователей</option>
+        <option value="activity">Активность</option>
+    </select>
+
+    <label>по убыванию</label>
+    <input type="checkbox"  formControlName="orderAsc">
+
+    <label>Сортировать по 2</label>
+    <select formControlName = "nextOrder">
+        <option value="name"> Имя</option>
+        <option value="date">Дата</option>
+        <option value="user-count">Кол-во пользователей</option>
+        <option value="activity">Активность</option>
+    </select>
+
+    <label>по убыванию</label>
+    <input type="checkbox" checked formControlName="nextOrderAsc">
+
     <input type="submit" value="поиск">
 </form>
 

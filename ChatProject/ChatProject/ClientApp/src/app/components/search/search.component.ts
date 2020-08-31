@@ -5,7 +5,6 @@ import { DataService } from 'src/app/services/data.service';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { DataShell } from 'src/app/models/data-shell';
 import { HttpErrorResponse } from '@angular/common/http';
-
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
@@ -21,22 +20,45 @@ export class SearchComponent {
         private dataService:DataService, 
     ){
         this.searchForm = new FormGroup({
-            groupName: new FormControl(null)
+            groupName: new FormControl(null),
+            onlyPublic: new FormControl(true),
+            order: new FormControl("activity"),
+            orderAsc: new FormControl(true),
+            nextOrder: new FormControl(null),
+            nextOrderAsc: new FormControl(false),
         })
-        this.chatGroups = new  Array<ChatGroup>();
     }
 
     startSearch(){
         let groupName = this.searchForm.controls['groupName'].value;
+        let onlyPublic = this.searchForm.controls['onlyPublic'].value;
+        let order = this.searchForm.controls['order'].value;
+        let orderAsc = this.searchForm.controls['orderAsc'].value;
+        let nextOrder = this.searchForm.controls['nextOrder'].value;
+        let nextOrderAsc = this.searchForm.controls['nextOrderAsc'].value;
+
+        console.log(onlyPublic, order, orderAsc, nextOrder, nextOrderAsc);
+
         if(groupName && TypeChecker.checkType<string>(groupName, 'length')){
-            this.dataService.getUserDatas<DataShell>('search-chats', new Map<string,string>().set('groupName',groupName))
+            this.chatGroups = new Array<ChatGroup>();
+            let queryParams = new Map<string,string>();
+            queryParams.set('groupName',groupName);
+            queryParams.set('onlyPublic',onlyPublic);
+            if(order){
+                queryParams.set('order',order);
+                queryParams.set('orderAsc',orderAsc);
+            }
+            if(nextOrder){
+                queryParams.set('nextOrder',nextOrder);
+                queryParams.set('nextOrderAsc',nextOrderAsc);
+            }
+            this.dataService.getUserDatas<DataShell>('search-chats', queryParams)
             .subscribe(
                 (chatGroup:DataShell)=>{
                     if(chatGroup.datas && TypeChecker.checkType<Array<any>>(chatGroup.datas, 'length') && chatGroup.datas.length>0){
                         chatGroup.datas.forEach(
                             ch =>{
                                 if(TypeChecker.checkType<ChatGroup>(ch, 'Private')){
-                                    this.searchForm.reset();
                                     this.chatGroups.push(ch);
                                 }
                             }
@@ -47,7 +69,7 @@ export class SearchComponent {
                     }
                 },
                 (err: HttpErrorResponse) => this.parsError(err)
-            );
+           );
         }
     }
 
