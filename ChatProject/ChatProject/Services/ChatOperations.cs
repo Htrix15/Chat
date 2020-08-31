@@ -93,6 +93,19 @@ namespace ChatProject.Services
             }
             return new DataShell();
         }
+
+        public virtual async Task<DataShell> IncrementMessageCount(string id){
+            int chatId = Convert.ToInt32(id);
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup>(
+                predicate: _ => _.Id == chatId,
+                take: 1)).FirstOrDefault();
+            if(thisGroup!=null){
+                thisGroup.MessageCount++;
+                await _db.UpdateAsync(thisGroup);
+            }
+            return new DataShell();
+        }
+
         public virtual async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
         {  
             var result = new DataShell();

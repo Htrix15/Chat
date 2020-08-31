@@ -32,13 +32,13 @@ namespace ChatProject.Hubs
         }
 
         public async Task AddingUserToGroup(){
-
             await Groups.AddToGroupAsync(Context.ConnectionId, Group);
         }
 
         public async Task SendToAll(string message)
         {
             await Clients.Group(Group).SendAsync("SendToAll", new ChatMessage(){Nick =  UserName, Text = message});
+            await _validateRequest.ValidateAsync(Group, new MyValidator(new StringIsInt()), _chatOperations.IncrementMessageCount);
         }
 
         public override async Task OnConnectedAsync()

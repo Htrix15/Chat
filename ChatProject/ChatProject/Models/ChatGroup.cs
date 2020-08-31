@@ -15,12 +15,14 @@ namespace ChatProject.Models
         public bool Private { get; set; }
         public string Password { get; set; }
         public int UserCount { get; set; }
+        public int MessageCount { get; set; }
         public DateTime DateCreated { get; set; }
 
         public void HasDefaultValue(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ChatGroup>().Property(_ => _.Private).HasDefaultValue(false);
             modelBuilder.Entity<ChatGroup>().Property(_ => _.UserCount).HasDefaultValue(0);
+            modelBuilder.Entity<ChatGroup>().Property(_ => _.MessageCount).HasDefaultValue(0);
             modelBuilder.Entity<ChatGroup>().Property(_ => _.DateCreated).HasDefaultValueSql("GETDATE()");
         }
 

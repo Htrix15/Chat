@@ -46,7 +46,7 @@ export class CreateComponent {
             TypeChecker.checkType<string>(this.nick, 'length')){
                 
                 let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
-                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, new Date())  
+                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, 1, new Date())  
                 
                 this.dataService.postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
                     (chatGroup:DataShell)=>{
@@ -72,7 +72,6 @@ export class CreateComponent {
             .getUserDatas('check-nick', new Map<string, string>().set('nick', nick))
             .subscribe(
                 ()=>{
-                    console.log('!', this);
                     this.connectionPreparation(chatGroup, nick, password);
                 },
                 (err: HttpErrorResponse) => this.parsError(err)
@@ -84,7 +83,6 @@ export class CreateComponent {
         password: string
         ){
             if(!chatGroup.Private){
-                console.log('!', this);
                 this.chatingService
                 .connectToChat(chatGroup.Id.toString(), nick);
             } else {
