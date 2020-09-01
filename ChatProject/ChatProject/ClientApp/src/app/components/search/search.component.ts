@@ -23,9 +23,7 @@ export class SearchComponent {
             groupName: new FormControl(null),
             onlyPublic: new FormControl(true),
             order: new FormControl("activity"),
-            orderAsc: new FormControl(true),
-            nextOrder: new FormControl(null),
-            nextOrderAsc: new FormControl(false),
+            orderAsc: new FormControl(false)
         })
     }
 
@@ -34,10 +32,7 @@ export class SearchComponent {
         let onlyPublic = this.searchForm.controls['onlyPublic'].value;
         let order = this.searchForm.controls['order'].value;
         let orderAsc = this.searchForm.controls['orderAsc'].value;
-        let nextOrder = this.searchForm.controls['nextOrder'].value;
-        let nextOrderAsc = this.searchForm.controls['nextOrderAsc'].value;
 
-        console.log(onlyPublic, order, orderAsc, nextOrder, nextOrderAsc);
 
         if(groupName && TypeChecker.checkType<string>(groupName, 'length')){
             this.chatGroups = new Array<ChatGroup>();
@@ -47,10 +42,6 @@ export class SearchComponent {
             if(order){
                 queryParams.set('order',order);
                 queryParams.set('orderAsc',orderAsc);
-            }
-            if(nextOrder){
-                queryParams.set('nextOrder',nextOrder);
-                queryParams.set('nextOrderAsc',nextOrderAsc);
             }
             this.dataService.getUserDatas<DataShell>('search-chats', queryParams)
             .subscribe(

@@ -2,9 +2,9 @@ using ChatProject.Interfaces;
 using ChatProject.ServicesClasses;
 using System;
 
-namespace ChatProject.RequestValidators.Rules
+namespace ChatProject.Validators.Rules.StringTypeCheck
 {
-    public class StringIsInt: IValidateRules
+    public class StringIsBool: IValidateStringRules
     {
         public string Check(string value){
             if(Boolean.TryParse(value, out bool outBool)){

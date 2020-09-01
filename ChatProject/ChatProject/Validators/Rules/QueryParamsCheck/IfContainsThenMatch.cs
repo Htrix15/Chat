@@ -4,22 +4,23 @@ using Microsoft.AspNetCore.Http;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
-namespace ChatProject.RequestValidators.Rules
+namespace ChatProject.Validators.Rules.QueryParamsCheck
 {
-    public class IfContainsThenIsBool: IValidateRules
+    public class IfContainsThenMatch: IValidateQueryParamsRules
     {
         private string key;
-        public IfContainsThenIsBool(string key){
+        private string[] options;
+        public IfContainsThenMatch(string key, params string[] options){
             this.key = key;
+            this.options = options;
         }
         public string Check(IQueryCollection requestParams){
-             if(requestParams.ContainsKey(key)){
-                if(Boolean.TryParse(requestParams.ContainsKey(key).ToString(), out bool outBool)){
+            if(requestParams.ContainsKey(key)){
+                if(options.Contains(requestParams[key].ToString())){
                     return null;
                 } else{
-                    return $"query key {key} isn't valid";
+                    return $"query key {key} value isn't valid";
                 }
             }
             else{

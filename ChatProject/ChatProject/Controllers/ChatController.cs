@@ -9,8 +9,9 @@ using System.Security.Claims;
 using ChatProject.Models;
 using ChatProject.Interfaces;
 using ChatProject.Services;
-using ChatProject.RequestValidators;
-using ChatProject.RequestValidators.Rules;
+using ChatProject.Validators;
+using ChatProject.Validators.Rules.QueryParamsCheck;
+using ChatProject.Validators.Rules.StringTypeCheck;
 using Newtonsoft.Json;
 
 namespace ChatProject.Controllers
@@ -34,7 +35,7 @@ namespace ChatProject.Controllers
             var result = await _validateRequest
                 .ValidateAsync(
                     Request.Query, 
-                    new MyValidator(
+                    new QueryParamsValidator(
                         new ContainsKey("groupName"), 
                         new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
                         new ContainsKey("nick"), 
@@ -53,7 +54,7 @@ namespace ChatProject.Controllers
             var result = _validateRequest
                 .Validate(
                     Request.Query, 
-                    new MyValidator(
+                    new QueryParamsValidator(
                         new ContainsKey("nick"), 
                         new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
                         )
@@ -70,18 +71,15 @@ namespace ChatProject.Controllers
             var result = await _validateRequest
                 .ValidateAsync(
                     Request.Query, 
-                    new MyValidator(
+                    new QueryParamsValidator(
                         new ContainsKey("groupName"), 
                         new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
                         new ContainsKey("onlyPublic"), 
-                        new IfContainsThenIsBool("onlyPublic"),
+                        new IfContainsThenIsType("onlyPublic", new StringIsBool()),
                         new IfContainsThenMatch("order", "name","date","user-count","activity"),
-                        new IfContainsThenMatch("nextOrder", "name","date","user-count","activity"),
                         new IfContainsThenContains("order","orderAsc"),
-                        new IfContainsThenContains("nextOrder","nextOrderAsc"),
-                        new IfContainsThenIsBool("orderAsc"),
-                        new IfContainsThenIsBool("nextOrderAsc")
-                        ), 
+                        new IfContainsThenIsType("orderAsc", new StringIsBool())  
+                    ), 
                     _chatOperations.SearchChatsAsync);
             if(result.CheckNotError()){
                 return Ok(JsonConvert.SerializeObject(result));

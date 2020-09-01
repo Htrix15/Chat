@@ -5,9 +5,8 @@ using System.Text.RegularExpressions;
 
 namespace ChatProject.Interfaces
 {
-    public interface IValidateRules
+    public interface IValidateQueryParamsRules
     {
-       string Check(IQueryCollection requestParams)=>"requestParams is invalid";
-       string Check(string requestParams)=>"string is invalid";
+       string Check(IQueryCollection requestParams);
     }
 }

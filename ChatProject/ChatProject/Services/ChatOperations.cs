@@ -26,8 +26,8 @@ namespace ChatProject.Services
         {
             var result = new DataShell();
             var groupName = requestParams["groupName"].ToString();
-            result.data = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: chatGroup => chatGroup.Name == groupName, 
+            result.data = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: chatGroup => chatGroup.Name == groupName, 
                 selector: chatGroup => new ChatGroup(){Id = chatGroup.Id, Name= chatGroup.Name, Private = chatGroup.Private },
                 take: 1)).FirstOrDefault();
             
@@ -44,8 +44,8 @@ namespace ChatProject.Services
             var result = new DataShell();
             var _chatGroup = chatGroup as ChatGroup;
 
-            var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: _ => _.Id == _chatGroup.Id && _.Password == _chatGroup.Password, 
+            var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: _ => _.Id == _chatGroup.Id && _.Password == _chatGroup.Password, 
                 take: 1)).FirstOrDefault();
             
             if(foundChatGroup==null){
@@ -62,8 +62,7 @@ namespace ChatProject.Services
             
             Expression<Func<ChatGroup, Object>> order = null;
             Expression<Func<ChatGroup, Object>> orderByDescending = null;
-            // Expression<Func<ChatGroup, dynamic>> thenBy = null;
-            // Expression<Func<ChatGroup, dynamic>> thenByDescending = null;
+            Expression<Func<ChatGroup, bool>> checkPrivate = null;
 
             if(requestParams.ContainsKey("order")){
                 if( Convert.ToBoolean(requestParams["orderAsc"])){
@@ -101,8 +100,11 @@ namespace ChatProject.Services
                 }
             }
 
-            result.datas = await _db.SelectAsync<ChatGroup, ChatGroup, Object, Object>(
-                predicate: _ => _.Name.Contains(searchGroupName) && _.Private != onlyPublic,
+            if(onlyPublic){
+                checkPrivate = _ => _.Private==false;
+            }
+
+            result.datas = await _db.SelectAsync<ChatGroup, ChatGroup, Object>(
                 selector: _ => new ChatGroup(){
                     Id = _.Id, 
                     Name= _.Name, 
@@ -110,11 +112,11 @@ namespace ChatProject.Services
                     UserCount = _.UserCount,
                     MessageCount = _.MessageCount,
                     DateCreated = _.DateCreated},
-                order: order,
-                orderByDescending: orderByDescending//,
-                // thenBy: thenBy,
-                // thenByDescending: thenByDescending
+                -1,-1,order, orderByDescending,
+                _ => _.Name.Contains(searchGroupName),
+                checkPrivate
             );
+
             if(result.datas == null || result.datas.Count()==0){
                 result.AddError("groups not found");
             }
@@ -123,8 +125,8 @@ namespace ChatProject.Services
 
         public virtual async Task<DataShell> IncrementUserCount(string id){
             int chatId = Convert.ToInt32(id);
-            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: _ => _.Id == chatId,
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: _ => _.Id == chatId,
                 take: 1)).FirstOrDefault();
             if(thisGroup!=null){
                 thisGroup.UserCount++;
@@ -134,8 +136,8 @@ namespace ChatProject.Services
         }
         public virtual async Task<DataShell> DecrementUserCount(string id){
             int chatId = Convert.ToInt32(id);
-            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: _ => _.Id == chatId,
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: _ => _.Id == chatId,
                 take: 1)).FirstOrDefault();
             if(thisGroup!=null){
                 if(thisGroup.UserCount>1){
@@ -150,8 +152,8 @@ namespace ChatProject.Services
 
         public virtual async Task<DataShell> IncrementMessageCount(string id){
             int chatId = Convert.ToInt32(id);
-            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: _ => _.Id == chatId,
+            var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: _ => _.Id == chatId,
                 take: 1)).FirstOrDefault();
             if(thisGroup!=null){
                 thisGroup.MessageCount++;
@@ -170,8 +172,8 @@ namespace ChatProject.Services
                 Password = _chatGroup.Password
             };
             
-            var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int, int>(
-                predicate: _ => _.Name == _chatGroup.Name , 
+            var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
+                predicates: _ => _.Name == _chatGroup.Name , 
                 take: 1)).FirstOrDefault();
             if(foundChatGroup!=null){
                 result.AddError("Chat name is't unique");

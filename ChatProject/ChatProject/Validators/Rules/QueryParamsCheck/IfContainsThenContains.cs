@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ChatProject.RequestValidators.Rules
+namespace ChatProject.Validators.Rules.QueryParamsCheck
 {
-    public class IfContainsThenContains: IValidateRules
+    public class IfContainsThenContains: IValidateQueryParamsRules
     {
         private string key1;
         private string key2;

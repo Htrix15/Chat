@@ -3,9 +3,9 @@ using ChatProject.ServicesClasses;
 using Microsoft.AspNetCore.Http;
 using System.Text.RegularExpressions;
 
-namespace ChatProject.RequestValidators.Rules
+namespace ChatProject.Validators.Rules.QueryParamsCheck
 {
-    public class RegexIsMatch: IValidateRules
+    public class RegexIsMatch: IValidateQueryParamsRules
     {
         private string pattern;
         private string key;

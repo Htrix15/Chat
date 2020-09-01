@@ -66,77 +66,72 @@ namespace ChatProject.ServicesClasses
             return DataChangeAsync<TEntity>(data, EntityState.Added);
         }
 
-        public async virtual Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey, TKey2>(
-            Expression<Func<TEntity, bool>> predicate = null, 
+        public async virtual Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey>(
             Expression<Func<TEntity, TResult>> selector = null, 
             int skip = -1, 
             int take = -1,
             Expression<Func<TResult, TKey>> order = null,
             Expression<Func<TResult, TKey>> orderByDescending = null,
-            Expression<Func<TResult, TKey2>> thenBy = null,
-            Expression<Func<TResult, TKey2>> thenByDescending = null)
+            params Expression<Func<TEntity, bool>>[] predicates
+            )
             where TEntity : class
             where TResult : class
         {
-
-            if (selector != null)
-            {
-                IQueryable<TResult> query;
-                if (predicate != null)
+            try{
+                if (selector != null)
                 {
-                    query = Set<TEntity>().Where(predicate).Select(selector);        
+                    IQueryable<TResult> query;
+                    if (predicates != null && predicates.Length>0)
+                    {
+                        IQueryable<TEntity> queries = Set<TEntity>();
+                        foreach(var predicate in predicates){
+                            if(predicate != null){
+                                queries = queries.Where(predicate);
+                            }
+                        }
+                        query = queries.Select(selector);        
+                    }
+                    else
+                    {
+                        query = Set<TEntity>().Select(selector);
+                    }
+
+                    return await OrderAsync<TResult, TKey>(query, skip, take, order, orderByDescending);
                 }
                 else
                 {
-                    query = Set<TEntity>().Select(selector);
+                    IQueryable<TEntity> query = Set<TEntity>();
+                    if (predicates != null && predicates.Length>0)
+                    {
+                        foreach(var predicate in predicates){
+                            if(predicate != null){
+                                query = query.Where(predicate);
+                            }
+                        }
+                    }
+                    return await OrderAsync<TResult, TKey>((IQueryable<TResult>)query, skip, take, order, orderByDescending);
                 }
-
-                return await OrderAsync<TResult, TKey, TKey2>(query, skip, take, order, orderByDescending, thenBy, thenByDescending);
-            }
-            else
-            {
-                IQueryable<TEntity> query;
-                if (predicate != null)
-                {
-                    query = Set<TEntity>().Where(predicate);
-                }
-                else
-                {
-                    query = Set<TEntity>();
-                }
-                return await OrderAsync<TResult, TKey, TKey2>((IQueryable<TResult>)query, skip, take, order, orderByDescending, thenBy, thenByDescending);
+            } catch {
+                return null;
             }
         }
 
-        private async Task<IEnumerable<TResult>> OrderAsync<TResult,TKey,TKey2>(
+        private async Task<IEnumerable<TResult>> OrderAsync<TResult,TKey>(
             IQueryable<TResult> query, 
             int skip = -1, 
             int take = -1,
             Expression<Func<TResult, TKey>> order = null,
-            Expression<Func<TResult, TKey>> orderByDescending = null,
-            Expression<Func<TResult, TKey2>> thenBy = null,
-            Expression<Func<TResult, TKey2>> thenByDescending = null){
-
-            if(order != null){
-                if(thenBy != null){
-                    query = query.OrderBy(order).ThenBy(thenBy);
-                } else if(thenByDescending != null){
-                    query = query.OrderBy(order).ThenByDescending(thenByDescending);
-                } else {
+            Expression<Func<TResult, TKey>> orderByDescending = null){
+            try{    
+                if(order != null){
                     query = query.OrderBy(order);
+                } else if(orderByDescending != null){
+                    query = query.OrderByDescending(orderByDescending);
                 }
-            } else {
-                if(orderByDescending != null){
-                    if(thenBy != null){
-                        query = query.OrderByDescending(orderByDescending).ThenBy(thenBy);
-                    } else if(thenByDescending != null){
-                        query = query.OrderByDescending(orderByDescending).ThenByDescending(thenByDescending);
-                    } else {
-                        query = query.OrderByDescending(orderByDescending);
-                    }
-                }
+                return await SkipTakeAsync<TResult>(query, skip, take);
+            } catch {
+                return null;
             }
-            return await SkipTakeAsync<TResult>(query, skip, take);
         }
 
         private async Task<IEnumerable<TResult>> SkipTakeAsync<TResult>(IQueryable<TResult> query, int skip = -1, int take = -1)

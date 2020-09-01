@@ -9,15 +9,13 @@ namespace ChatProject.Interfaces
 {
     public interface IDb
     {
-        Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey, TKey2>(
-            Expression<Func<TEntity, bool>> predicate = null, 
+        Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey>(
             Expression<Func<TEntity, TResult>> selector = null, 
             int skip = -1, 
             int take = -1,
             Expression<Func<TResult, TKey>> order = null,
             Expression<Func<TResult, TKey>> orderByDescending = null,
-            Expression<Func<TResult, TKey2>> thenBy = null,
-            Expression<Func<TResult, TKey2>> thenByDescending = null
+            params Expression<Func<TEntity, bool>>[] predicates
             ) where TEntity : class where TResult : class;
         Task<DataShell> UpdateAsync<TEntity>(TEntity data) where TEntity : class;
         Task<DataShell> DeleteAsync<TEntity>(TEntity data) where TEntity : class;
