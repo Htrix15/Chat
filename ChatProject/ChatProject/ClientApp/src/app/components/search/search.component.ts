@@ -32,7 +32,7 @@ export class SearchComponent {
             onlyPublic: new FormControl(true),
             order: new FormControl("activity"),
             orderAsc: new FormControl(false)
-        })
+        });
         this.countSkipChatSearchPositions = 0;
         this.showPagin = false;
         this.chatGroups = new Array<ChatGroup>();

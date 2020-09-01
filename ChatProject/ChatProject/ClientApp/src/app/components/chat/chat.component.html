@@ -1,5 +1,15 @@
 <h2>CHAT</h2>
+<ng-container *ngFor="let chatMessage of chatMessages">
+    <p>{{chatMessage.nick}} - {{chatMessage.text}}</p>
+</ng-container>
 
-<button (click)="onPush()">Push 1</button>
+<form
+[formGroup] = inputMessageForm
+(ngSubmit)="onPush()">
+
+    <textarea formControlName="textMessage"></textarea>
+    <input type="submit" value="Отправить">
+</form>
+
 
 

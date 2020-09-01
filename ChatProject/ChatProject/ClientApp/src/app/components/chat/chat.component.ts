@@ -1,9 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import {HubConnection, HubConnectionBuilder} from '@aspnet/signalr'
-import { ActivatedRoute, Router } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
-import { Observable } from 'rxjs';
 import { ChatMessage } from '../../models/chat-message'
+import { FormGroup, FormControl } from '@angular/forms';
+import { TypeChecker } from 'src/app/services-classes/type-checker';
+
 @Component({
     selector: 'app-chat',
     templateUrl: './chat.component.html',
@@ -12,24 +12,35 @@ import { ChatMessage } from '../../models/chat-message'
 
 export class ChatComponent implements OnInit {
 
-    private chatId: string;
-
+    public inputMessageForm:FormGroup;
+    public chatMessages: Array<ChatMessage>;
 
     constructor(
-        private route: ActivatedRoute,
-        private chatingService: ChatingService) {}
+        private chatingService: ChatingService
+    ){
+        this.inputMessageForm = new FormGroup({
+            textMessage: new FormControl(null)
+        });
+        this.chatMessages = new Array<ChatMessage>();
+    }
 
     ngOnInit(): void {
-        this.route.params.subscribe((params)=>this.chatId = params.id);
-            this.chatingService
-            .listeningChat()
-            .subscribe((message:ChatMessage)=>console.log(message.nick, message.text));
+        this.chatingService
+        .listeningChat()
+        .subscribe(
+            (message:ChatMessage)=>{
+               this.chatMessages.push(message);
+            }
+        );
     }
 
 
     onPush(): void {
-        this.chatingService
-        .pushMessage('new message')
-        .subscribe(()=>{}, ()=>console.log('fail'));
+        let text = this.inputMessageForm.controls['textMessage'].value;
+        if(text && TypeChecker.checkType<string>(text, 'length')){
+            this.chatingService
+            .pushMessage(text)
+            .subscribe(()=>{this.inputMessageForm.reset();}, ()=>console.log('fail'));
+        }
     }
 }
