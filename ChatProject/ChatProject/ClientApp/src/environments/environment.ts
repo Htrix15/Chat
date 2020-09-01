@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  stepSkipChatSearchPositions: 2
+  stepSkipChatSearchPositions: 10,
+  maxChatTextLength: 250
 };
 
 /*

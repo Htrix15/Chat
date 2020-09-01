@@ -27,12 +27,13 @@ namespace ChatProject.Models
         }
 
        public DataShell Validate(){
-            var regFormat = new Regex(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", RegexOptions.Compiled | RegexOptions.Singleline);
+            var regFormat = new Regex(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", RegexOptions.Compiled | RegexOptions.Singleline);
             if(!regFormat.IsMatch(Name)){
                 return new DataShell("chat name isn't valid");
             }
-            if(Private && Password.Length>25){
-               return new DataShell("password there is invalid length");
+            regFormat = new Regex(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", RegexOptions.Compiled | RegexOptions.Singleline);
+            if(Private && !regFormat.IsMatch(Password)){
+               return new DataShell("password isn't valid");
             }
             return new DataShell();    
         }

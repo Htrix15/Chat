@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  stepSkipChatSearchPositions: 2
+  stepSkipChatSearchPositions: 10,
+  maxChatTextLength: 250
 };

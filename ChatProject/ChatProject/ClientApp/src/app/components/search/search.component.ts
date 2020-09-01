@@ -1,11 +1,12 @@
 ﻿import { Component } from '@angular/core';
 import { ChatGroup } from 'src/app/models/chat-group';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { DataShell } from 'src/app/models/data-shell';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { MyValidators } from 'src/app/services-classes/my-validators';
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
@@ -28,7 +29,10 @@ export class SearchComponent {
         private dataService:DataService
     ){
         this.searchForm = new FormGroup({
-            groupName: new FormControl(null),
+            groupName: new FormControl(null, 
+                [   MyValidators.validateEmptyText(),
+                    Validators.pattern('^[а-яА-ЯёЁa-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+                ]),
             onlyPublic: new FormControl(true),
             order: new FormControl("activity"),
             orderAsc: new FormControl(false)

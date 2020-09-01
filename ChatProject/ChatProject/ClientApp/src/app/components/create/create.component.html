@@ -4,14 +4,32 @@
 [formGroup] = inputChatOptions
 (ngSubmit) = "createChat()"
 >
-
     <label>Ваш ник</label>
     <input type="text" formControlName="nick">
+    <small *ngIf="inputChatOptions.get('nick').errors && inputChatOptions.get('nick').touched">
+        от 3 символов, только такие
+    </small>
+
     <ng-container *ngIf="chatNotCreated">
+
         <label>Название чата</label>
         <input type="text" formControlName="chatName">
+        <small *ngIf="inputChatOptions.get('chatName').errors && inputChatOptions.get('chatName').touched">
+            от 3 символов, только такие
+        </small>
+
         <label>Пароль (если хотите чтобы чат был приватный)</label>
         <input type="password" formControlName="password">
+        <small *ngIf="inputChatOptions.get('password').errors && inputChatOptions.get('password').touched">
+            от 3 символов, только такие
+        </small>
+
     </ng-container>
-    <input type="submit" value="Создать и подключится">
+
+    <input type="submit" 
+    [disabled]=
+            "inputChatOptions.invalid || 
+            !inputChatOptions.get('chatName').touched||
+            !inputChatOptions.get('nick').touched" 
+    value="Создать и подключится">
 </form>

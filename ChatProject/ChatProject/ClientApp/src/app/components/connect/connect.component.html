@@ -1,29 +1,46 @@
 <p>Подключится к чату</p>
 
 <form 
-[formGroup] = inputChatNameForm 
->
+[formGroup] = connectToChatForm 
+(ngSubmit) = "connectToChat()">
+
     <label>Введите ид чата</label>
     <input type="text" formControlName="chatName">
-   
-</form>
-<!-- <input type="submit" value="Подключится"> -->
+    <small *ngIf="connectToChatForm.get('chatName').errors && connectToChatForm.get('chatName').touched">
+        от 3 символов, только такие
+    </small>
 
-<form 
-[formGroup] = inputNickForm
-(ngSubmit)="connectToChat()">
     <label>Введите ник</label>
     <input type="text" formControlName="nick">
-    <input type="submit" value="Подключится">
+    <small *ngIf="connectToChatForm.get('nick').errors && connectToChatForm.get('nick').touched">
+        от 3 символов, только такие
+    </small>
+
+    <input type="submit" 
+        [disabled]=
+            "connectToChatForm.invalid || 
+            !connectToChatForm.get('nick').touched ||
+            !connectToChatForm.get('chatName').touched"
+        value="Подключится">
 </form>
+
 
 <ng-container *ngIf="privateChat">
 
     <form 
     [formGroup] = inputPasswordForm
     (ngSubmit) = "checkPassword()">
+        
         <label>Введите пароль от чата</label>
         <input type="password" formControlName="password">
-        <input type="submit" value="Подключится">
+        <small *ngIf="inputPasswordForm.invalid && inputPasswordForm.get('password').touched">
+            от 3 символов, только такие
+        </small>
+
+        <input type="submit" 
+        [disabled]=
+            "inputPasswordForm.invalid || 
+            !inputPasswordForm.get('password').touched"
+        value="Подключится">
     </form> 
 </ng-container>

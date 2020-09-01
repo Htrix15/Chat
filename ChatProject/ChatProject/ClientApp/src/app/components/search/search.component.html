@@ -6,7 +6,9 @@
 
     <label>Введите название чата</label>
     <input type="text" formControlName="groupName">
-
+        <small *ngIf="searchForm.invalid && searchForm.get('groupName').touched">
+            от 3 символов, только такие
+        </small>
     <label>Исключить приватные</label>
     <input type="checkbox" formControlName="onlyPublic">
 
@@ -22,7 +24,7 @@
     <input type="checkbox"  formControlName="orderAsc">
 
 
-    <input type="submit" value="поиск">
+    <input type="submit" [disabled]="searchForm.invalid || !searchForm.get('groupName').touched" value="поиск">
 </form>
 
 <button *ngIf="showPagin" (click)="continueSearchAndSkip()">Еще</button>

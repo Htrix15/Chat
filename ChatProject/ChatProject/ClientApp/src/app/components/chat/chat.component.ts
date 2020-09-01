@@ -1,9 +1,10 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ChatingService } from '../../services/chating.service';
 import { ChatMessage } from '../../models/chat-message'
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, NumberValueAccessor } from '@angular/forms';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
-
+import { MyValidators } from '../../services-classes/my-validators'
+import { environment } from 'src/environments/environment';
 @Component({
     selector: 'app-chat',
     templateUrl: './chat.component.html',
@@ -14,12 +15,14 @@ export class ChatComponent implements OnInit {
 
     public inputMessageForm:FormGroup;
     public chatMessages: Array<ChatMessage>;
+    public maxChatTextLength: number;
 
     constructor(
         private chatingService: ChatingService
     ){
+        this.maxChatTextLength = environment.maxChatTextLength;
         this.inputMessageForm = new FormGroup({
-            textMessage: new FormControl(null)
+            textMessage: new FormControl(null, [MyValidators.validateEmptyText(), Validators.maxLength(this.maxChatTextLength)])
         });
         this.chatMessages = new Array<ChatMessage>();
     }

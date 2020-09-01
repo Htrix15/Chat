@@ -1,11 +1,5 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
 using ChatProject.Models;
 using ChatProject.Interfaces;
 using ChatProject.Services;
@@ -37,9 +31,9 @@ namespace ChatProject.Controllers
                     Request.Query, 
                     new QueryParamsValidator(
                         new ContainsKey("groupName"), 
-                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
+                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", "groupName"),
                         new ContainsKey("nick"), 
-                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
+                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", "nick")
                         ), 
                     _chatOperations.CheckGroupAsync);
             if(result.CheckNotError()){
@@ -56,7 +50,7 @@ namespace ChatProject.Controllers
                     Request.Query, 
                     new QueryParamsValidator(
                         new ContainsKey("nick"), 
-                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "nick")
+                        new RegexIsMatch(@"^[a-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", "nick")
                         )
                     );
             if(result.CheckNotError()){
@@ -73,7 +67,7 @@ namespace ChatProject.Controllers
                     Request.Query, 
                     new QueryParamsValidator(
                         new ContainsKey("groupName"), 
-                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
+                        new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{3,30}$", "groupName"),
                         new ContainsKey("onlyPublic"), 
                         new IsType("onlyPublic", new StringIsBool()),
                         new IfContainsThenOneOf("order", "name", "date", "user-count", "activity"),

@@ -7,6 +7,7 @@ import { ChatGroup } from '../../models/chat-group';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
+import { MyValidators } from 'src/app/services-classes/my-validators';
 
 @Component({
   selector: 'app-connect',
@@ -15,8 +16,7 @@ import { TypeChecker} from '../../services-classes/type-checker'
 })
 export class ConnectComponent implements OnInit {
 
-  public inputChatNameForm: FormGroup;
-  public inputNickForm: FormGroup;
+  public connectToChatForm: FormGroup;
   public inputPasswordForm: FormGroup;
 
   public chatName: string;
@@ -30,16 +30,23 @@ export class ConnectComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private chatingService: ChatingService){
-      this.inputChatNameForm = new FormGroup({
-        chatName: new FormControl(null)
+
+    this.connectToChatForm = new FormGroup({
+        chatName: new FormControl(null, 
+          [ MyValidators.validateEmptyText(),
+            Validators.pattern('^[а-яА-ЯёЁa-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+          ]),
+        nick: new FormControl(null,  
+          [ MyValidators.validateEmptyText(),
+            Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+          ])
     });
 
     this.inputPasswordForm = new FormGroup({
-      password: new FormControl(null)
-    });
-
-    this.inputNickForm = new FormGroup({
-      nick: new FormControl(null)
+      password: new FormControl(null, 
+        [ MyValidators.validateEmptyText(),
+          Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+        ])
     });
 
     this.privateChat = false;
@@ -48,15 +55,14 @@ export class ConnectComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params =>{
       if(params['cg']){
-       this.inputChatNameForm.controls['chatName'].setValue(params['cg']);
+       this.connectToChatForm.controls['chatName'].setValue(params['cg']);
       }
     })
   }
 
   connectToChat(): void{
-
-    let chatName = this.inputChatNameForm.controls['chatName']?.value;
-    this.nick = this.inputNickForm.controls['nick']?.value;
+    let chatName = this.connectToChatForm.controls['chatName']?.value;
+    this.nick = this.connectToChatForm.controls['nick']?.value;
     if(chatName && TypeChecker.checkType<string>(chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
       this.dataService
       .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', chatName).set('nick', this.nick))

@@ -8,7 +8,8 @@
 (ngSubmit)="onPush()">
 
     <textarea formControlName="textMessage"></textarea>
-    <input type="submit" value="Отправить">
+    <input type="submit" [disabled]="inputMessageForm.invalid" value="Отправить">
+    <small *ngIf="inputMessageForm.invalid && inputMessageForm.get('textMessage').touched">Непустой текст до {{maxChatTextLength}}</small>
 </form>
 
 

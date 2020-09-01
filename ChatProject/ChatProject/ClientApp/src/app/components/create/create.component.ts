@@ -7,6 +7,7 @@ import { ChatGroup } from '../../models/chat-group';
 import { Router } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
+import { MyValidators } from 'src/app/services-classes/my-validators';
 
 @Component({
     selector: 'app-create',
@@ -27,9 +28,18 @@ export class CreateComponent {
         private dataService:DataService, 
         private chatingService: ChatingService){
           this.inputChatOptions = new FormGroup({
-            nick: new FormControl(null),
-            chatName: new FormControl(null),
-            password: new FormControl(null)
+            chatName: new FormControl(null, 
+                [ MyValidators.validateEmptyText(),
+                  Validators.pattern('^[а-яА-ЯёЁa-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+                ]),
+            nick: new FormControl(null,  
+                [ MyValidators.validateEmptyText(),
+                    Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+                ]),
+            password: new FormControl(null, 
+                [ 
+                    Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
+                ])
         });
         this.chatNotCreated = true;
     }
