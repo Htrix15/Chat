@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace ChatProject.Validators.Rules.QueryParamsCheck
 {
-    public class IfContainsThenMatch: IValidateQueryParamsRules
+    public class IfContainsThenOneOf: IValidateQueryParamsRules
     {
         private string key;
         private string[] options;
-        public IfContainsThenMatch(string key, params string[] options){
+        public IfContainsThenOneOf(string key, params string[] options){
             this.key = key;
             this.options = options;
         }

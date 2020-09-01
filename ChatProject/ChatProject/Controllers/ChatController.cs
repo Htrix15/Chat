@@ -75,10 +75,14 @@ namespace ChatProject.Controllers
                         new ContainsKey("groupName"), 
                         new RegexIsMatch(@"^[а-яА-ЯёЁa-zA-Z0-9 \-+=_\?\!\(\)\<\>]{1,30}$", "groupName"),
                         new ContainsKey("onlyPublic"), 
-                        new IfContainsThenIsType("onlyPublic", new StringIsBool()),
-                        new IfContainsThenMatch("order", "name","date","user-count","activity"),
+                        new IsType("onlyPublic", new StringIsBool()),
+                        new IfContainsThenOneOf("order", "name", "date", "user-count", "activity"),
                         new IfContainsThenContains("order","orderAsc"),
-                        new IfContainsThenIsType("orderAsc", new StringIsBool())  
+                        new IfContainsThenIsType("orderAsc", new StringIsBool()),
+                        new ContainsKey("skip"), 
+                        new IsType("skip", new StringIsInt()), 
+                        new ContainsKey("take"),
+                        new IsType("take", new StringIsInt())  
                     ), 
                     _chatOperations.SearchChatsAsync);
             if(result.CheckNotError()){

@@ -59,7 +59,9 @@ namespace ChatProject.Services
             var result = new DataShell();
             var searchGroupName = requestParams["groupName"].ToString();
             var onlyPublic = Convert.ToBoolean(requestParams["onlyPublic"]);
-            
+            int skip = Convert.ToInt32(requestParams["skip"]);
+            int take = Convert.ToInt32(requestParams["take"]);
+
             Expression<Func<ChatGroup, Object>> order = null;
             Expression<Func<ChatGroup, Object>> orderByDescending = null;
             Expression<Func<ChatGroup, bool>> checkPrivate = null;
@@ -96,7 +98,6 @@ namespace ChatProject.Services
                             orderByDescending = _ => _.MessageCount/_.UserCount;
                             break;}
                     }
-
                 }
             }
 
@@ -105,14 +106,17 @@ namespace ChatProject.Services
             }
 
             result.datas = await _db.SelectAsync<ChatGroup, ChatGroup, Object>(
-                selector: _ => new ChatGroup(){
+                _ => new ChatGroup(){
                     Id = _.Id, 
                     Name= _.Name, 
                     Private = _.Private, 
                     UserCount = _.UserCount,
                     MessageCount = _.MessageCount,
-                    DateCreated = _.DateCreated},
-                -1,-1,order, orderByDescending,
+                    DateCreated = _.DateCreated}, 
+                skip,
+                take,
+                order, 
+                orderByDescending,
                 _ => _.Name.Contains(searchGroupName),
                 checkPrivate
             );

@@ -25,6 +25,8 @@
     <input type="submit" value="поиск">
 </form>
 
+<button *ngIf="showPagin" (click)="continueSearchAndSkip()">Еще</button>
+
 <ng-container *ngFor="let chatGroup of chatGroups">
     <a [routerLink]="[ '/connect']" [queryParams]="{cg: chatGroup.Name}"> {{chatGroup.Name}}</a> 
 </ng-container>
