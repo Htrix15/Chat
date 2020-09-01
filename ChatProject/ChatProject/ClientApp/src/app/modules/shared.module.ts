@@ -1,7 +1,8 @@
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-import { CommonModule } from "@angular/common";
+import { CommonModule, LocationStrategy, PathLocationStrategy } from "@angular/common";
+
 
 @NgModule({
   declarations: [ 
@@ -12,7 +13,7 @@ import { CommonModule } from "@angular/common";
       ReactiveFormsModule,
   ],
   providers:[
-
+      [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
      ],
   exports: [
       CommonModule,

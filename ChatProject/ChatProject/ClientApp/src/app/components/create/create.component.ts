@@ -114,13 +114,13 @@ export class CreateComponent implements OnInit{
             
             if(!chatGroup.Private){
                 this.chatingService
-                .connectToChat(chatGroup.Id.toString(), nick);
+                .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
             } else {
                 chatGroup.Password = password;
                 this.dataService.postUserDatas<ChatGroup, DataShell>(chatGroup, 'check-password').subscribe(
                     () => {
                     this.chatingService
-                    .connectToChat(chatGroup.Id.toString(), nick);
+                    .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
                     }, 
                     (err: HttpErrorResponse) => this.parsError(err)
                 );

@@ -27,7 +27,8 @@ namespace ChatProject
             services.AddScoped<DbColumnsInitializer>();
             services.AddScoped<ValidateRequest>();
             services.AddScoped<ChatOperations>();
-
+            services.AddScoped<SupportingMethods>();
+            
             services.AddControllers();
             services.AddSignalR();
 

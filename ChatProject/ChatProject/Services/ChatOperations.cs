@@ -19,9 +19,12 @@ namespace ChatProject.Services
     public class ChatOperations
     {
         private readonly IDb _db;
-        public ChatOperations(ChatContext db){
+        private readonly SupportingMethods _supportingMethods;
+        public ChatOperations(ChatContext db, SupportingMethods supportingMethods){
             _db = db;
+            _supportingMethods = supportingMethods;
         }
+
         public virtual async Task<DataShell> CheckGroupAsync(IQueryCollection requestParams)
         {
             var result = new DataShell();
@@ -43,9 +46,10 @@ namespace ChatProject.Services
         {  
             var result = new DataShell();
             var _chatGroup = chatGroup as ChatGroup;
+            var password = _supportingMethods.GetHashString(_chatGroup.Password);
 
             var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
-                predicates: _ => _.Id == _chatGroup.Id && _.Password == _chatGroup.Password, 
+                predicates: _ => _.Id == _chatGroup.Id && _.Password == password, 
                 take: 1)).FirstOrDefault();
             
             if(foundChatGroup==null){
@@ -170,10 +174,11 @@ namespace ChatProject.Services
         {  
             var result = new DataShell();
             var _chatGroup =  chatGroup as ChatGroup;
+            var password = _chatGroup.Password!=null? _supportingMethods.GetHashString(_chatGroup.Password):null;
             var newChatGroup = new ChatGroup(){
                 Name = _chatGroup.Name,
                 Private = _chatGroup.Private,
-                Password = _chatGroup.Password
+                Password = password
             };
             
             var foundChatGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(

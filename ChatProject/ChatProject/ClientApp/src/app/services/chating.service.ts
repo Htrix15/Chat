@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from '@aspnet/signalr'
 import { Observable } from 'rxjs';
 import { ChatMessage } from '../models/chat-message'
-import { TypeChecker } from '../services-classes/type-checker'
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -11,6 +10,8 @@ import { Router } from '@angular/router';
 export class ChatingService {
 
   private hubConnection: HubConnection;
+  private chatName: string;
+
   constructor( private router: Router,) { }
 
   checkChat():boolean{
@@ -19,8 +20,12 @@ export class ChatingService {
     }
     return false;
   }
+  
+  getChatName():string{
+    return this.chatName;
+  }
 
-  connectToChat(chatId:string, nick:string):void{
+  connectToChat(chatId:string, nick:string, chatName: string):void{
     new Observable<boolean>(
       sub => {
         this.hubConnection = new HubConnectionBuilder()
@@ -28,12 +33,13 @@ export class ChatingService {
 
         this.hubConnection.start()
         .then(() => {
-            this.hubConnection
-                .invoke('AddingUserToGroup')
-                .then(()=>sub.next(true))
-                .catch(()=>sub.error(false));
-              }
-            )
+          this.chatName = chatName;
+          this.hubConnection
+              .invoke('AddingUserToGroup')
+              .then(()=>sub.next(true))
+              .catch(()=>sub.error(false));
+            }
+          )
         .catch(()=>sub.error(false));
       }
     ).subscribe(

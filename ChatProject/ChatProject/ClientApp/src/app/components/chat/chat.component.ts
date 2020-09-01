@@ -1,10 +1,11 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ChatingService } from '../../services/chating.service';
 import { ChatMessage } from '../../models/chat-message'
-import { FormGroup, FormControl, Validators, NumberValueAccessor } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { MyValidators } from '../../services-classes/my-validators'
 import { environment } from 'src/environments/environment';
+
 @Component({
     selector: 'app-chat',
     templateUrl: './chat.component.html',
@@ -16,9 +17,10 @@ export class ChatComponent implements OnInit {
     public inputMessageForm:FormGroup;
     public chatMessages: Array<ChatMessage>;
     public maxChatTextLength: number;
+    public thisChatUrl: string;
 
     constructor(
-        private chatingService: ChatingService
+        private chatingService: ChatingService,
     ){
         this.maxChatTextLength = environment.maxChatTextLength;
         this.inputMessageForm = new FormGroup({
@@ -35,8 +37,8 @@ export class ChatComponent implements OnInit {
                this.chatMessages.push(message);
             }
         );
+        this.thisChatUrl = `https://${location.host}/connect?cg=${this.chatingService.getChatName()}`;
     }
-
 
     onPush(): void {
         let text = this.inputMessageForm.controls['textMessage'].value;

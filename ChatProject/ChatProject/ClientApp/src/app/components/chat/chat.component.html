@@ -1,4 +1,6 @@
 <h2>CHAT</h2>
+<small>Ссылка для подключения: {{thisChatUrl}}</small>
+
 <ng-container *ngFor="let chatMessage of chatMessages">
     <p>{{chatMessage.nick}} - {{chatMessage.text}}</p>
 </ng-container>

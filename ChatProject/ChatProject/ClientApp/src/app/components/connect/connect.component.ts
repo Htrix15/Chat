@@ -78,14 +78,14 @@ export class ConnectComponent implements OnInit {
 
 
   connectToChat(): void{
-    let chatName = this.connectToChatForm.controls['chatName']?.value;
+    this.chatName = this.connectToChatForm.controls['chatName']?.value;
     this.nick = this.connectToChatForm.controls['nick']?.value;
     let saveNick = this.connectToChatForm.controls['rememberMe']?.value;
     
-    if(chatName && TypeChecker.checkType<string>(chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
+    if(this.chatName && TypeChecker.checkType<string>(this.chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
       this.rememberMe(saveNick);
       this.dataService
-      .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', chatName).set('nick', this.nick))
+      .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', this.chatName).set('nick', this.nick))
       .subscribe(
         (chatGroup: DataShell) => {
         if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
@@ -94,7 +94,7 @@ export class ConnectComponent implements OnInit {
               this.privateChat = true;
             } else{
               this.chatingService
-              .connectToChat(this.chatGroup.Id.toString(), this.nick);
+              .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
             }
           }
         }, 
@@ -109,7 +109,7 @@ export class ConnectComponent implements OnInit {
       this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
         () => {
           this.chatingService
-          .connectToChat(this.chatGroup.Id.toString(), this.nick);
+          .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
         }, 
         (err: HttpErrorResponse) => this.parsError(err)
       );
