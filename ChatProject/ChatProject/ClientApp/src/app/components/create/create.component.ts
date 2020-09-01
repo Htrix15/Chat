@@ -15,7 +15,7 @@ import { MyValidators } from 'src/app/services-classes/my-validators';
     styleUrls: ['./create.component.scss']
 })
 
-export class CreateComponent {
+export class CreateComponent implements OnInit{
 
     public inputChatOptions: FormGroup;
     public chatNotCreated:boolean;
@@ -39,10 +39,19 @@ export class CreateComponent {
             password: new FormControl(null, 
                 [ 
                     Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
-                ])
+                ]),
+            rememberMe: new FormControl(true)
         });
         this.chatNotCreated = true;
     }
+
+    ngOnInit(): void {
+        let nick = localStorage.getItem('nick');
+        if(nick){
+          this.inputChatOptions.controls['nick'].setValue(nick);
+          this.inputChatOptions.controls['nick'].markAsTouched();
+        }
+      }
 
     createChat():void{
 
@@ -82,16 +91,27 @@ export class CreateComponent {
             .getUserDatas('check-nick', new Map<string, string>().set('nick', nick))
             .subscribe(
                 ()=>{
+                    let saveNick = this.inputChatOptions.controls['rememberMe']?.value;
+                    this.rememberMe(saveNick);
                     this.connectionPreparation(chatGroup, nick, password);
                 },
                 (err: HttpErrorResponse) => this.parsError(err)
             );  
     }
 
+    rememberMe(saveNick: boolean): void{
+        if(saveNick){
+          localStorage.setItem('nick', this.nick);
+        } else {
+          localStorage.removeItem('nick');
+        }
+    }
+
     connectionPreparation(chatGroup:ChatGroup, 
         nick:string, 
         password: string
         ){
+            
             if(!chatGroup.Private){
                 this.chatingService
                 .connectToChat(chatGroup.Id.toString(), nick);

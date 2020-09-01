@@ -39,7 +39,8 @@ export class ConnectComponent implements OnInit {
         nick: new FormControl(null,  
           [ MyValidators.validateEmptyText(),
             Validators.pattern('^[a-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')
-          ])
+          ]),
+        rememberMe: new FormControl(true)
     });
 
     this.inputPasswordForm = new FormGroup({
@@ -56,14 +57,33 @@ export class ConnectComponent implements OnInit {
     this.route.queryParams.subscribe(params =>{
       if(params['cg']){
        this.connectToChatForm.controls['chatName'].setValue(params['cg']);
+       this.connectToChatForm.controls['chatName'].markAsTouched();
       }
     })
+    let nick = localStorage.getItem('nick');
+    if(nick){
+      this.connectToChatForm.controls['nick'].setValue(nick);
+      this.connectToChatForm.controls['nick'].markAsTouched();
+    }
   }
+  
+  rememberMe(saveNick: boolean): void{
+    if(saveNick){
+      localStorage.setItem('nick', this.nick);
+    } else {
+      localStorage.removeItem('nick');
+    }
+  }
+
+
 
   connectToChat(): void{
     let chatName = this.connectToChatForm.controls['chatName']?.value;
     this.nick = this.connectToChatForm.controls['nick']?.value;
+    let saveNick = this.connectToChatForm.controls['rememberMe']?.value;
+    
     if(chatName && TypeChecker.checkType<string>(chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
+      this.rememberMe(saveNick);
       this.dataService
       .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', chatName).set('nick', this.nick))
       .subscribe(
