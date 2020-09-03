@@ -7,6 +7,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { DataService } from './services/data.service'
 import { ChatingService} from './services/chating.service'
 import { SharedModule} from './modules/shared.module'
+import { MessagesService } from './services/messages.service'
+
+
 @NgModule({
   declarations: [
     AppComponent
@@ -19,7 +22,8 @@ import { SharedModule} from './modules/shared.module'
   ],
   providers: [
     DataService,
-    ChatingService
+    ChatingService,
+    MessagesService
   ],
   bootstrap: [AppComponent]
 })

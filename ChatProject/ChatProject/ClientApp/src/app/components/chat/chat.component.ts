@@ -6,6 +6,8 @@ import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { MyValidators } from '../../services-classes/my-validators'
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { MessagesService } from 'src/app/services/messages.service';
+import { MyMessage } from 'src/app/services-classes/my-message';
 
 @Component({
     selector: 'app-chat',
@@ -25,6 +27,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     constructor(
         private chatingService: ChatingService,
+        private messagesService: MessagesService
     ){
         this.maxChatTextLength = environment.maxChatTextLength;
         this.inputMessageForm = new FormGroup({
@@ -49,7 +52,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         if(text && TypeChecker.checkType<string>(text, 'length')){
             this.pushMessageSubscribe = this.chatingService
             .pushMessage(text)
-            .subscribe(()=>{this.inputMessageForm.reset();}, ()=>console.log('fail'));
+            .subscribe(()=>{this.inputMessageForm.reset();}, 
+                ()=>this.messagesService.setMessage(new MyMessage('Что-то пошла не так')));
         }
     }
 

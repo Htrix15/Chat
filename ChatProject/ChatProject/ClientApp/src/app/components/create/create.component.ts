@@ -8,6 +8,8 @@ import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { MyMessage } from 'src/app/services-classes/my-message';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
     selector: 'app-create',
@@ -30,7 +32,8 @@ export class CreateComponent implements OnInit, OnDestroy{
 
     constructor(
         private dataService:DataService, 
-        private chatingService: ChatingService){
+        private chatingService: ChatingService,
+        private messagesService: MessagesService){
           this.inputChatOptions = new FormGroup({
             chatName: new FormControl(null, 
                 [ MyValidators.validateEmptyText(),
@@ -134,9 +137,9 @@ export class CreateComponent implements OnInit, OnDestroy{
 
     parsError(error: HttpErrorResponse):void{
         if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-          console.warn(error.error.errors);
+          this.messagesService.setMessage(new MyMessage(error.error.errors));
         } else {
-          console.error('что-то пошло не так');
+          this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
         }
     } 
 

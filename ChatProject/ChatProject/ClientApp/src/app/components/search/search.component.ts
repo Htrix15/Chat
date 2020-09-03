@@ -8,6 +8,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { MyMessage } from 'src/app/services-classes/my-message';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
     selector: 'app-search',
@@ -30,7 +32,8 @@ export class SearchComponent implements OnDestroy{
     private searchChatesSubscribe: Subscription; 
 
     constructor(
-        private dataService:DataService
+        private dataService:DataService,
+        private messagesService: MessagesService
     ){
         this.searchForm = new FormGroup({
             groupName: new FormControl(null, 
@@ -73,7 +76,7 @@ export class SearchComponent implements OnDestroy{
             }
             this.search(queryParams);
         } else {
-            console.error('название пустое');
+            this.messagesService.setMessage(new MyMessage('Пустое название чата', false));
         }
     }
 
@@ -100,7 +103,7 @@ export class SearchComponent implements OnDestroy{
                     }
                 } else {
                     this.searchForm.reset();
-                    console.log('не найдено');
+                    this.messagesService.setMessage(new MyMessage('Ничего не найдено', false));
                     this.showPagin = false;
                 }
             },
@@ -112,10 +115,10 @@ export class SearchComponent implements OnDestroy{
 
     parsError(error: HttpErrorResponse):void{
         if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-          console.warn(error.error.errors);
+          this.messagesService.setMessage(new MyMessage(error.error.errors));
           this.showPagin = false;
         } else {
-          console.error('что-то пошло не так');
+          this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
         }
     } 
 

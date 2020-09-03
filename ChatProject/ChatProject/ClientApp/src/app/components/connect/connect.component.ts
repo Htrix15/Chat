@@ -9,6 +9,8 @@ import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { MessagesService } from 'src/app/services/messages.service';
+import { MyMessage } from 'src/app/services-classes/my-message';
 
 @Component({
   selector: 'app-connect',
@@ -33,7 +35,8 @@ export class ConnectComponent implements OnInit, OnDestroy {
   constructor(
     private dataService:DataService, 
     private route: ActivatedRoute,
-    private chatingService: ChatingService){
+    private chatingService: ChatingService,
+    private messagesService: MessagesService){
 
     this.connectToChatForm = new FormGroup({
         chatName: new FormControl(null, 
@@ -80,8 +83,6 @@ export class ConnectComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   connectToChat(): void{
     this.chatName = this.connectToChatForm.controls['chatName']?.value;
     this.nick = this.connectToChatForm.controls['nick']?.value;
@@ -124,9 +125,9 @@ export class ConnectComponent implements OnInit, OnDestroy {
   
   parsError(error: HttpErrorResponse):void{
     if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-      console.warn(error.error.errors);
+      this.messagesService.setMessage(new MyMessage(error.error.errors));
     } else {
-      console.error('что-то пошло не так');
+      this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
     }
   } 
 
