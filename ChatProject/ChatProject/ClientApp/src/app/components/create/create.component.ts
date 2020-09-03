@@ -1,13 +1,13 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DataShell } from '../../models/data-shell'
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ChatGroup } from '../../models/chat-group';
-import { Router } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 import { MyValidators } from 'src/app/services-classes/my-validators';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
     selector: 'app-create',
@@ -15,7 +15,7 @@ import { MyValidators } from 'src/app/services-classes/my-validators';
     styleUrls: ['./create.component.scss']
 })
 
-export class CreateComponent implements OnInit{
+export class CreateComponent implements OnInit, OnDestroy{
 
     public inputChatOptions: FormGroup;
     public chatNotCreated:boolean;
@@ -23,6 +23,10 @@ export class CreateComponent implements OnInit{
     private nick: string;
     private password: string;
     private chatGroup: ChatGroup;
+
+    private createChatSubscribe: Subscription; 
+    private checkNickSubscribe: Subscription; 
+    private checkPasswordSubscribe: Subscription; 
 
     constructor(
         private dataService:DataService, 
@@ -66,8 +70,8 @@ export class CreateComponent implements OnInit{
                 
                 let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
                 let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, 1, new Date())  
-                
-                this.dataService.postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
+                this.createChatSubscribe = this.dataService.
+                postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
                     (chatGroup:DataShell)=>{
                         if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
                             this.chatNotCreated = false;
@@ -87,7 +91,7 @@ export class CreateComponent implements OnInit{
         nick:string, 
         password: string, 
         ){
-            this.dataService
+            this.checkNickSubscribe = this.dataService
             .getUserDatas('check-nick', new Map<string, string>().set('nick', nick))
             .subscribe(
                 ()=>{
@@ -117,7 +121,8 @@ export class CreateComponent implements OnInit{
                 .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
             } else {
                 chatGroup.Password = password;
-                this.dataService.postUserDatas<ChatGroup, DataShell>(chatGroup, 'check-password').subscribe(
+                this.checkPasswordSubscribe = this.dataService.
+                postUserDatas<ChatGroup, DataShell>(chatGroup, 'check-password').subscribe(
                     () => {
                     this.chatingService
                     .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
@@ -134,4 +139,10 @@ export class CreateComponent implements OnInit{
           console.error('что-то пошло не так');
         }
     } 
+
+    ngOnDestroy(): void {
+        if(this.createChatSubscribe){this.createChatSubscribe.unsubscribe();}
+        if(this.checkNickSubscribe){this.checkNickSubscribe.unsubscribe();}
+        if(this.checkPasswordSubscribe){this.checkPasswordSubscribe.unsubscribe();}
+    }
 }

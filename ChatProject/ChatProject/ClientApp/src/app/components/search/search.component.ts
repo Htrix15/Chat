@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, OnDestroy } from '@angular/core';
 import { ChatGroup } from 'src/app/models/chat-group';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
@@ -7,13 +7,15 @@ import { DataShell } from 'src/app/models/data-shell';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { MyValidators } from 'src/app/services-classes/my-validators';
+import { Subscription } from 'rxjs/internal/Subscription';
+
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
 
-export class SearchComponent {
+export class SearchComponent implements OnDestroy{
 
     public searchForm: FormGroup;
     public chatGroups: Array<ChatGroup>;
@@ -24,6 +26,8 @@ export class SearchComponent {
     private onlyPublic: boolean; 
     private order: string; 
     private orderAsc: boolean; 
+
+    private searchChatesSubscribe: Subscription; 
 
     constructor(
         private dataService:DataService
@@ -74,7 +78,8 @@ export class SearchComponent {
     }
 
     private search(queryParams:Map<string,string>){ 
-        this.dataService.getUserDatas<DataShell>('search-chats', queryParams)
+        this.searchChatesSubscribe = this.dataService
+        .getUserDatas<DataShell>('search-chats', queryParams)
         .subscribe(
             (chatGroup:DataShell)=>{
                 if(chatGroup.datas && TypeChecker.checkType<Array<any>>(chatGroup.datas, 'length') && chatGroup.datas.length>0){
@@ -113,4 +118,8 @@ export class SearchComponent {
           console.error('что-то пошло не так');
         }
     } 
+
+    ngOnDestroy(): void {
+       if(this.searchChatesSubscribe){this.searchChatesSubscribe.unsubscribe();}
+    }
 }

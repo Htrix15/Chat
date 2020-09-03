@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DataShell } from '../../models/data-shell'
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ChatGroup } from '../../models/chat-group';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 import { MyValidators } from 'src/app/services-classes/my-validators';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.component.html',
   styleUrls: ['./connect.component.scss']
 })
-export class ConnectComponent implements OnInit {
+export class ConnectComponent implements OnInit, OnDestroy {
 
   public connectToChatForm: FormGroup;
   public inputPasswordForm: FormGroup;
@@ -25,10 +26,13 @@ export class ConnectComponent implements OnInit {
 
   public chatGroup: ChatGroup;
 
+  private routeSubscribe: Subscription; 
+  private getParamsSubscribe: Subscription; 
+  private postPasswordSubscribe: Subscription; 
+
   constructor(
     private dataService:DataService, 
     private route: ActivatedRoute,
-    private router: Router,
     private chatingService: ChatingService){
 
     this.connectToChatForm = new FormGroup({
@@ -53,8 +57,9 @@ export class ConnectComponent implements OnInit {
     this.privateChat = false;
   }
 
+
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params =>{
+    this.routeSubscribe = this.route.queryParams.subscribe(params =>{
       if(params['cg']){
        this.connectToChatForm.controls['chatName'].setValue(params['cg']);
        this.connectToChatForm.controls['chatName'].markAsTouched();
@@ -84,7 +89,7 @@ export class ConnectComponent implements OnInit {
     
     if(this.chatName && TypeChecker.checkType<string>(this.chatName, 'length') && this.nick && TypeChecker.checkType<string>(this.nick, 'length')){
       this.rememberMe(saveNick);
-      this.dataService
+      this.getParamsSubscribe = this.dataService
       .getUserDatas('check-group-and-nick', new Map<string, string>().set('groupName', this.chatName).set('nick', this.nick))
       .subscribe(
         (chatGroup: DataShell) => {
@@ -106,7 +111,8 @@ export class ConnectComponent implements OnInit {
     let password = this.inputPasswordForm.controls['password']?.value;
     if(password && TypeChecker.checkType<string>(password, 'length')){
       this.chatGroup.Password = password;
-      this.dataService.postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
+      this.postPasswordSubscribe = this.dataService.
+      postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
         () => {
           this.chatingService
           .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
@@ -123,5 +129,11 @@ export class ConnectComponent implements OnInit {
       console.error('что-то пошло не так');
     }
   } 
+
+  ngOnDestroy(): void {
+    if(this.routeSubscribe){this.routeSubscribe.unsubscribe();}
+    if(this.getParamsSubscribe){this.getParamsSubscribe.unsubscribe();}
+    if(this.postPasswordSubscribe){this.postPasswordSubscribe.unsubscribe();}
+  }
 
 }

@@ -1,10 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ChatingService } from '../../services/chating.service';
 import { ChatMessage } from '../../models/chat-message'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { MyValidators } from '../../services-classes/my-validators'
 import { environment } from 'src/environments/environment';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
     selector: 'app-chat',
@@ -12,12 +13,15 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./chat.component.scss']
 })
 
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
 
     public inputMessageForm:FormGroup;
     public chatMessages: Array<ChatMessage>;
     public maxChatTextLength: number;
     public thisChatUrl: string;
+
+    private listeningChatSubscribe: Subscription; 
+    private pushMessageSubscribe: Subscription;
 
     constructor(
         private chatingService: ChatingService,
@@ -30,7 +34,7 @@ export class ChatComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.chatingService
+        this.listeningChatSubscribe = this.chatingService
         .listeningChat()
         .subscribe(
             (message:ChatMessage)=>{
@@ -43,9 +47,14 @@ export class ChatComponent implements OnInit {
     onPush(): void {
         let text = this.inputMessageForm.controls['textMessage'].value;
         if(text && TypeChecker.checkType<string>(text, 'length')){
-            this.chatingService
+            this.pushMessageSubscribe = this.chatingService
             .pushMessage(text)
             .subscribe(()=>{this.inputMessageForm.reset();}, ()=>console.log('fail'));
         }
+    }
+
+    ngOnDestroy(): void {
+        if(this.listeningChatSubscribe){this.listeningChatSubscribe.unsubscribe();}
+        if(this.pushMessageSubscribe){this.pushMessageSubscribe.unsubscribe();}
     }
 }
