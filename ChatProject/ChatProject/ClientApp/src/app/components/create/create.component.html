@@ -1,38 +1,51 @@
 <h2>Create chat</h2>
+<div>
 
-<form 
+<form
 [formGroup] = inputChatOptions
 (ngSubmit) = "createChat()"
->
-    <label>Ваш ник</label>
-    <input type="text" formControlName="nick">
-    <small *ngIf="inputChatOptions.get('nick').errors && inputChatOptions.get('nick').touched">
-        от 3 символов, только такие
-    </small>
 
-    <label>Запомнить меня</label>
-    <input type="checkbox" formControlName="rememberMe">
+>
+<mat-form-field>
+    <mat-label>Ваш ник</mat-label>
+    <input matInput placeholder="Nick" formControlName="nick">
+    <mat-error *ngIf="inputChatOptions.get('nick').errors && inputChatOptions.get('nick').touched"> 
+        От 3 символов
+    </mat-error>
+</mat-form-field>
+
+    <mat-checkbox formControlName="rememberMe" labelPosition = "before">Запомнить меня</mat-checkbox>
 
     <ng-container *ngIf="chatNotCreated">
 
-        <label>Название чата</label>
-        <input type="text" formControlName="chatName">
-        <small *ngIf="inputChatOptions.get('chatName').errors && inputChatOptions.get('chatName').touched">
-            от 3 символов, только такие
-        </small>
+        <mat-form-field>
+            <mat-label>Название чата</mat-label>
+            <input matInput placeholder="CoolChat" formControlName="chatName">
+            <mat-error *ngIf="inputChatOptions.get('chatName').errors && inputChatOptions.get('chatName').touched">
+                от 3 символов, только такие
+            </mat-error>
+        </mat-form-field>
 
-        <label>Пароль (если хотите чтобы чат был приватный)</label>
-        <input type="password" formControlName="password">
-        <small *ngIf="inputChatOptions.get('password').errors && inputChatOptions.get('password').touched">
-            от 3 символов, только такие
-        </small>
-
+        <mat-form-field>
+            <mat-label>Пароль (если хотите чтобы чат был приватный)</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password" formControlName="password">
+            <mat-error *ngIf="inputChatOptions.get('password').errors && inputChatOptions.get('password').touched">
+                от 3 символов, только такие
+            </mat-error>
+            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>   
     </ng-container>
 
-    <input type="submit" 
+    <button type="submit" 
+    mat-raised-button
+    color="accent"
     [disabled]=
             "inputChatOptions.invalid || 
             !inputChatOptions.get('chatName').touched||
             !inputChatOptions.get('nick').touched" 
-    value="Создать и подключится">
-</form>
+    >Создать и подключится</button>
+</form> 
+
+</div>

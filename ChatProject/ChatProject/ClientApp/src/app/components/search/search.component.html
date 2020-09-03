@@ -1,30 +1,37 @@
 <h2>Search Chat</h2>
-
+<div>
 <form 
 [formGroup] = searchForm
 (ngSubmit)="startSearch()">
 
-    <label>Введите название чата</label>
-    <input type="text" formControlName="groupName">
-        <small *ngIf="searchForm.invalid && searchForm.get('groupName').touched">
+    <mat-form-field>
+        <mat-label>Название чата</mat-label>
+        <input matInput placeholder="Cool Chat" formControlName="groupName">
+        <mat-error *ngIf="searchForm.invalid">
             от 3 символов, только такие
-        </small>
-    <label>Исключить приватные</label>
-    <input type="checkbox" formControlName="onlyPublic">
+        </mat-error>
+    </mat-form-field>
 
-    <label>Сортировать по</label>
-    <select formControlName = "order">
-        <option value="name">Имя</option>
-        <option value="date">Дате создания</option>
-        <option value="user-count">Кол-во пользователей</option>
-        <option value="activity">Активность</option>
-    </select>
+    <mat-checkbox formControlName="onlyPublic" labelPosition = "before">Исключить приватные</mat-checkbox>
 
-    <label>по возрастанию</label>
-    <input type="checkbox"  formControlName="orderAsc">
+    <mat-form-field >  
+        <mat-label>Сортировать по</mat-label>
+        <mat-select formControlName = "order">
+            <mat-option value="name">Имя</mat-option>
+            <mat-option value="date">Дате создания</mat-option>
+            <mat-option value="user-count">Кол-во пользователей</mat-option>
+            <mat-option value="activity">Активность</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox labelPosition = "before" formControlName="orderAsc">по возрастанию</mat-checkbox>
 
 
-    <input type="submit" [disabled]="searchForm.invalid || !searchForm.get('groupName').touched" value="поиск">
+    <button type="submit" 
+    [disabled]="searchForm.invalid || !searchForm.get('groupName').touched"
+    mat-raised-button
+    color="accent"
+    >Поиск</button>
 </form>
 
 <button *ngIf="showPagin" (click)="continueSearchAndSkip()">Еще</button>
@@ -33,3 +40,4 @@
     <a [routerLink]="[ '/connect']" [queryParams]="{cg: chatGroup.Name}"> {{chatGroup.Name}}</a> 
 </ng-container>
 
+</div>
