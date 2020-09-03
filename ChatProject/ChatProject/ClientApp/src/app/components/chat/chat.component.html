@@ -1,18 +1,36 @@
 <h2>CHAT</h2>
 <small>Ссылка для подключения: {{thisChatUrl}}</small>
 
-<ng-container *ngFor="let chatMessage of chatMessages">
-    <p>{{chatMessage.nick}} - {{chatMessage.text}}</p>
-</ng-container>
+<mat-card  *ngFor="let chatMessage of chatMessages">
+    <mat-card-subtitle>
+        {{chatMessage.nick}} 
+    </mat-card-subtitle>
+    <mat-card-content>
+        <p> {{chatMessage.text}}</p>
+    </mat-card-content>
+</mat-card>
 
+<div>
 <form
 [formGroup] = inputMessageForm
 (ngSubmit)="onPush()">
-
-    <textarea formControlName="textMessage"></textarea>
-    <input type="submit" [disabled]="inputMessageForm.invalid" value="Отправить">
-    <small *ngIf="inputMessageForm.invalid && inputMessageForm.get('textMessage').touched">Непустой текст до {{maxChatTextLength}}</small>
+    <mat-form-field>    
+        <mat-label>Ваше сообщение</mat-label>
+        <textarea #inputText matInput formControlName="textMessage"  (keyup.shift.enter)="onPush()"></textarea>
+        <mat-error *ngIf="inputMessageForm.invalid && !inputMessageForm.get('textMessage').touched">Непустой текст до {{maxChatTextLength}}</mat-error>
+        <mat-hint *ngIf="!inputMessageForm.invalid" align="start">shift + enter - отправить сообщение</mat-hint>
+        <mat-hint align="end"> {{inputText.value.length}} / {{maxChatTextLength}}</mat-hint>
+    </mat-form-field>
+        
+    <button 
+    type="submit" 
+    [disabled]="inputMessageForm.invalid"
+    mat-raised-button
+    color="accent"
+   
+    >"Отправить"</button>
+      
 </form>
-
+</div>
 
 

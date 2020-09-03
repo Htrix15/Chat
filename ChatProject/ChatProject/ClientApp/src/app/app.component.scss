@@ -1,0 +1,30 @@
+.header{
+    border-radius: 0%;
+    position:fixed;
+    z-index: 100;
+    width: 100%;
+
+}
+.expansion-content-box{
+    height: 100vh;
+}
+.header-margin{
+    height: 48px;
+}
+
+a{
+    color: white;
+    text-decoration: none;
+    -webkit-animation: fadein 1s;
+    animation: fadein 1s;
+}
+
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; } 
+    }   
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; } 
+  }

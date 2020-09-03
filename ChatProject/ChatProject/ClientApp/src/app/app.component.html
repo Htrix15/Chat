@@ -1,7 +1,24 @@
-<h1><a [routerLink]="['']">ГО В ЧАТ</a> </h1>
+<mat-expansion-panel 
+    #header 
+    expanded = true
+    (opened)="showLable = false"
+    (closed)="showLable = true" 
+    class="header" >
+    <mat-expansion-panel-header  >
+        <a *ngIf="showLable" [routerLink]="['']">GO</a>
+    </mat-expansion-panel-header>
+    <div class="expansion-content-box">
+        <h1>GO В ЧАТ!</h1>
+        <h3>Только текст, только хардкор!</h3>
+        <button  mat-raised-button (click)="routeTo('connect')">Connect</button>
+        <button  mat-raised-button (click)="routeTo('create')">Create</button>
+        <button  mat-raised-button (click)="routeTo('search')">Search</button>
+    </div>
+  
+</mat-expansion-panel>
 
-<a [routerLink]="[ '/connect']">Connect</a> 
-<a [routerLink]="[ '/create']">Create</a> 
-<a [routerLink]="[ '/search']">Search</a> 
-
+<div class="header-margin"></div>
+ 
 <router-outlet></router-outlet>
+
+

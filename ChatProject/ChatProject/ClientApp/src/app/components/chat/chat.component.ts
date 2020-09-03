@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ChatingService } from '../../services/chating.service';
 import { ChatMessage } from '../../models/chat-message'
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -25,6 +25,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     private listeningChatSubscribe: Subscription; 
     private pushMessageSubscribe: Subscription;
 
+    @ViewChild('inputText') inputText: ElementRef
+    
     constructor(
         private chatingService: ChatingService,
         private messagesService: MessagesService
@@ -52,13 +54,16 @@ export class ChatComponent implements OnInit, OnDestroy {
         if(text && TypeChecker.checkType<string>(text, 'length')){
             this.pushMessageSubscribe = this.chatingService
             .pushMessage(text)
-            .subscribe(()=>{this.inputMessageForm.reset();}, 
+            .subscribe(()=>{
+                this.inputMessageForm.reset();
+                (this.inputText.nativeElement as HTMLInputElement).focus();
+                }, 
                 ()=>this.messagesService.setMessage(new MyMessage('Что-то пошла не так')));
         }
     }
 
     ngOnDestroy(): void {
-        if(this.listeningChatSubscribe){this.listeningChatSubscribe.unsubscribe();}
-        if(this.pushMessageSubscribe){this.pushMessageSubscribe.unsubscribe();}
+         if(this.listeningChatSubscribe){this.listeningChatSubscribe.unsubscribe();}
+         if(this.pushMessageSubscribe){this.pushMessageSubscribe.unsubscribe();}
     }
 }

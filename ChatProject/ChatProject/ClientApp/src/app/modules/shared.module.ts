@@ -9,6 +9,10 @@ import {MatInputModule} from '@angular/material/input';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
+import {MatCardModule} from '@angular/material/card';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatExpansionModule} from '@angular/material/expansion';
+
 @NgModule({
   declarations: [ 
   ],
@@ -21,7 +25,10 @@ import {MatSelectModule} from '@angular/material/select';
       MatInputModule,
       MatIconModule,
       MatButtonModule,
-      MatSelectModule
+      MatSelectModule,
+      MatCardModule,
+      MatSidenavModule,
+      MatExpansionModule
   ],
   providers:[
       [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
@@ -35,7 +42,10 @@ import {MatSelectModule} from '@angular/material/select';
       MatInputModule,
       MatIconModule,
       MatButtonModule,
-      MatSelectModule
+      MatSelectModule,
+      MatCardModule,
+      MatSidenavModule,
+      MatExpansionModule
   ]
 })
 export class SharedModule { }
