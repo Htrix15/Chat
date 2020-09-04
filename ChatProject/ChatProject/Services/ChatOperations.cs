@@ -83,7 +83,7 @@ namespace ChatProject.Services
                             order = _ => _.DateCreated;
                             break;}
                         case("activity"):{
-                            order = _ => _.MessageCount/_.UserCount;
+                            order = _ =>  _.MessageCount/(_.UserCount==0?1:_.UserCount);
                             break;}
                     }
                 } 
@@ -99,7 +99,7 @@ namespace ChatProject.Services
                             orderByDescending = _ => _.DateCreated;
                             break;}
                         case("activity"):{
-                            orderByDescending = _ => _.MessageCount/_.UserCount;
+                            order = _ =>  _.MessageCount/(_.UserCount==0?1:_.UserCount);
                             break;}
                     }
                 }
