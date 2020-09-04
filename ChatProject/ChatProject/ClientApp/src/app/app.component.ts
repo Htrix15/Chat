@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatExpansionPanel } from '@angular/material/expansion';
 @Component({
   selector: 'app-root',
@@ -12,11 +12,17 @@ export class AppComponent implements OnInit {
   @ViewChild('header') header: MatExpansionPanel;
   public showLable:boolean;
 
-  constructor(private router: Router){
+  constructor(private router: Router,
+    private route: ActivatedRoute){
     this.showLable = false;
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params =>{
+      if(params['cg']){
+        this.header.close();
+      }
+    });
   }
 
   routeTo(route:string){

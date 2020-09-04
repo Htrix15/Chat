@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DataShell } from '../../models/data-shell'
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,6 +11,8 @@ import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MessagesService } from 'src/app/services/messages.service';
 import { MyMessage } from 'src/app/services-classes/my-message';
+import { MatStep } from '@angular/material/stepper';
+import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-connect',
@@ -31,6 +33,18 @@ export class ConnectComponent implements OnInit, OnDestroy {
   private routeSubscribe: Subscription; 
   private getParamsSubscribe: Subscription; 
   private postPasswordSubscribe: Subscription; 
+
+  @ViewChild('stepper') stepper: MatStep;
+  @ViewChild('connectStep') connectStep: MatStep;
+  @ViewChild('passwordStep') passwordStep: MatStep;
+  @ViewChild('checkPasswordStep') checkPasswordStep: MatStep;
+
+  public connectError:boolean;
+  public passwordError:boolean;
+  public connectErrorText:string;
+  public passwordErrorText:string;
+
+  public successConnect:boolean;
 
   constructor(
     private dataService:DataService, 
@@ -58,8 +72,19 @@ export class ConnectComponent implements OnInit, OnDestroy {
     });
 
     this.privateChat = false;
+    this.connectError = false;
+    this.successConnect = false;
+   
   }
 
+  backToStep(){
+    if(this.connectError) {
+      this.connectStep.interacted = false;
+    }
+    if(this.passwordError) {
+      this.checkPasswordStep.interacted = false;
+    }
+  }
 
   ngOnInit(): void {
     this.routeSubscribe = this.route.queryParams.subscribe(params =>{
@@ -84,6 +109,12 @@ export class ConnectComponent implements OnInit, OnDestroy {
   }
 
   connectToChat(): void{
+    this.connectError = false;
+    this.successConnect = false;
+    
+    this.privateChat = false;
+    this.connectErrorText = '';
+    this.inputPasswordForm.reset();
     this.chatName = this.connectToChatForm.controls['chatName']?.value;
     this.nick = this.connectToChatForm.controls['nick']?.value;
     let saveNick = this.connectToChatForm.controls['rememberMe']?.value;
@@ -95,39 +126,67 @@ export class ConnectComponent implements OnInit, OnDestroy {
       .subscribe(
         (chatGroup: DataShell) => {
         if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
+
             this.chatGroup = chatGroup.data;
+            this.successConnect = true;
             if(this.chatGroup.Private){
               this.privateChat = true;
+              this.connectStep.completed = true;
+              this.passwordStep.select();
             } else{
               this.chatingService
               .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
             }
           }
         }, 
-        (err: HttpErrorResponse) => this.parsError(err));
+        (err: HttpErrorResponse) => {this.connectError = true; this.parsError(err)});
     }
   }
 
   checkPassword(): void{
-    let password = this.inputPasswordForm.controls['password']?.value;
-    if(password && TypeChecker.checkType<string>(password, 'length')){
-      this.chatGroup.Password = password;
-      this.postPasswordSubscribe = this.dataService.
-      postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
-        () => {
-          this.chatingService
-          .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
-        }, 
-        (err: HttpErrorResponse) => this.parsError(err)
-      );
+    if(!this.connectError){
+      this.passwordError = false;
+      this.passwordErrorText = '';
+      let password = this.inputPasswordForm.controls['password']?.value;
+      if(password && TypeChecker.checkType<string>(password, 'length')){
+        this.chatGroup.Password = password;
+        this.postPasswordSubscribe = this.dataService.
+        postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
+          () => {
+            this.chatingService
+            .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
+          }, 
+          (err: HttpErrorResponse) => {this.passwordError = true; this.parsError(err)}
+        );
+      }
     }
   }
   
   parsError(error: HttpErrorResponse):void{
     if(TypeChecker.checkType<DataShell>(error.error, 'result')){
+
       this.messagesService.setMessage(new MyMessage(error.error.errors));
+      
+      if(this.connectError){
+        error.error.errors.forEach(err =>{
+          this.connectErrorText+= err +' ';
+        })
+      }
+      
+      if(this.passwordError){
+        error.error.errors.forEach(err =>{
+          this.passwordErrorText+= err +' ';
+        })
+      }
+      
     } else {
-      this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
+      this.messagesService.setMessage(new MyMessage('Что-то пошла не так'));
+      if(this.connectError){
+        this.connectErrorText = 'Что-то пошла не так';
+      }
+      if(this.passwordError){
+        this.passwordErrorText = 'Что-то пошла не так';
+      }
     }
   } 
 

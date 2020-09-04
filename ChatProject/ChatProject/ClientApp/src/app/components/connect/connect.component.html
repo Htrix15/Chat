@@ -1,64 +1,141 @@
-<div>
-<p>Подключится к чату</p>
+<mat-card class="card">   
+    <mat-card-title>Подключение к чату</mat-card-title>
 
-<form 
-[formGroup] = connectToChatForm 
-(ngSubmit) = "connectToChat()">
+    <mat-vertical-stepper [linear]="true" #stepper >
 
-    <mat-form-field>
-        <mat-label>Название чата</mat-label>
-        <input matInput placeholder="Cool chat"  formControlName="chatName">
-        <mat-error *ngIf="connectToChatForm.get('chatName').errors">
-            от 3 символов, только такие
-        </mat-error>
-    </mat-form-field>
+        <mat-step [stepControl]="connectToChatForm" label="Данные для входа">
+            <form 
+                [formGroup] = connectToChatForm 
+                (ngSubmit) = "connectToChat()"
+            >
+                <div class="group-inputs--space-between">
+                    <mat-form-field>
+                        <mat-label>Название чата</mat-label>
+                        <input 
+                            matInput
+                            placeholder="Cool chat"  
+                            formControlName="chatName"
+                        >
+                        <mat-error *ngIf="connectToChatForm.get('chatName').errors">
+                            Можно 3-30 шт. букв или цифр и некоторые символы
+                        </mat-error>
+                    </mat-form-field>
+                
+                    <mat-form-field>
+                        <mat-label>Ваш ник</mat-label>
+                        <input 
+                            matInput 
+                            placeholder="Nick" 
+                            formControlName="nick"
+                        >
+                        <mat-error *ngIf="connectToChatForm.get('nick').errors">
+                            Можно 3-30 шт. латинских букв или цифр и некоторые символы
+                        </mat-error>
+                    </mat-form-field>
+                </div>
 
-    <mat-form-field>
-        <mat-label>Ваш ник</mat-label>
-        <input matInput placeholder="Nick" formControlName="nick">
-        <mat-error *ngIf="connectToChatForm.get('nick').errors">
-            от 3 символов, только такие
-        </mat-error>
-    </mat-form-field>
+                <div class="group-inputs--space-between">
+                    <mat-checkbox 
+                        type="checkbox" 
+                        formControlName="rememberMe" 
+                        labelPosition = "before"
+                    >Запомнить меня</mat-checkbox>
+
+                    <button 
+                    type="submit" 
+                        mat-raised-button
+                        matStepperNext
+                        color="accent"
+                        [disabled]="connectToChatForm.invalid"
+                    >GO!</button>
+                </div>    
+            </form>
+        </mat-step>
+
+        <mat-step label="Подключение" #connectStep>
+
+            <mat-spinner  *ngIf="!connectError && !successConnect"></mat-spinner>
+
+            <ng-container #showConnectErrorText *ngIf="connectError && !successConnect">
+                <p class="error-text">{{connectErrorText}}</p>
+                <button
+                    mat-raised-button
+                    matStepperPrevious
+                    (click)="backToStep()"
+                >Назад</button>
+            </ng-container>
+            
+            <ng-container *ngIf="!connectError && successConnect">
+                <p class="success-text">Успех!</p>
+            </ng-container>
+
+        </mat-step>
+      
+        <mat-step [stepControl]="inputPasswordForm" label="Пароль" #passwordStep>
+            <form 
+                [formGroup] = inputPasswordForm
+                (ngSubmit) = "checkPassword()"
+                *ngIf="!connectError; else noConnect"
+            >
+                <div class="group-inputs--space-between">
+                    <mat-form-field>
+    
+                        <mat-label>Введите пароль от чата</mat-label>
+                        <input 
+                            matInput 
+                            [type]="hide ? 'text' : 'password'" 
+                            placeholder="Password" 
+                            formControlName="password">
+
+                        <mat-error *ngIf="inputPasswordForm.invalid">
+                            Можно 3-30 шт. латинских букв или цифр и некоторые символы
+                        </mat-error>
+
+                        <button 
+                            mat-icon-button 
+                            matSuffix 
+                            (click)="hide = !hide" 
+                            [attr.aria-label]="'Hide password'" 
+                            [attr.aria-pressed]="hide"
+                        ><mat-icon>{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+                        </button>
+                    
+                    </mat-form-field>   
+
+                    <button 
+                        type="submit" 
+                        mat-raised-button
+                        matStepperNext
+                        color="accent"
+                        [disabled]="inputPasswordForm.invalid"
+                    >Подключится</button>
+                </div>
+            </form> 
+
+            <ng-template #noConnect>
+                <p> C начала подключись! </p>
+                <button
+                mat-raised-button
+                matStepperPrevious
+                >Назад</button>
+            </ng-template>
+        </mat-step>
+
+        <mat-step label="Проверка пароля" #checkPasswordStep>
+
+            <mat-spinner *ngIf="!passwordError; else showPasswordErrorText"></mat-spinner>
+
+            <ng-template #showPasswordErrorText>
+                <p class="error-text">{{passwordErrorText}}</p>
+                <button
+                mat-raised-button
+                matStepperPrevious
+                (click)="backToStep()"
+                >Назад</button>
+            </ng-template>
+    
+        </mat-step>
 
 
-    <mat-checkbox type="checkbox" formControlName="rememberMe" labelPosition = "before">Запомнить меня</mat-checkbox>
-
-    <button type="submit" 
-        mat-raised-button
-        color="accent"
-        [disabled]=
-            "connectToChatForm.invalid || 
-            !connectToChatForm.get('nick').touched ||
-            !connectToChatForm.get('chatName').touched"
-        value="Подключится">
-        GO!
-    </button>
-</form>
-
-
-<ng-container *ngIf="privateChat">
-
-    <form 
-    [formGroup] = inputPasswordForm
-    (ngSubmit) = "checkPassword()">
-        <mat-form-field>
-            <mat-label>Введите пароль от чата</mat-label>
-            <input  matInput [type]="hide ? 'password' : 'text'" placeholder="Password" formControlName="password">
-            <mat-error *ngIf="inputPasswordForm.invalid">
-                от 3 символов, только такие
-            </mat-error>
-            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-        </mat-form-field>   
-        <button type="submit" 
-        mat-raised-button
-        color="accent"
-        [disabled]=
-            "inputPasswordForm.invalid || 
-            !inputPasswordForm.get('password').touched"
-        >Подключится</button>
-    </form> 
-</ng-container>
-</div>
+    </mat-vertical-stepper>
+</mat-card>

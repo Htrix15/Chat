@@ -12,7 +12,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatExpansionModule} from '@angular/material/expansion';
-
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 @NgModule({
   declarations: [ 
   ],
@@ -28,7 +29,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
       MatSelectModule,
       MatCardModule,
       MatSidenavModule,
-      MatExpansionModule
+      MatExpansionModule,
+      MatStepperModule,
+      MatProgressSpinnerModule
   ],
   providers:[
       [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
@@ -45,7 +48,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
       MatSelectModule,
       MatCardModule,
       MatSidenavModule,
-      MatExpansionModule
+      MatExpansionModule,
+      MatStepperModule,
+      MatProgressSpinnerModule
   ]
 })
 export class SharedModule { }
