@@ -1,4 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+
+@import "./assets/styles/colors.scss";
+@import "./assets/styles/sizes";
+
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+
+.group-inputs{
+    &--space-between{
+        display: flex;
+        justify-content: space-between;
+       // &:nth-child(odd){
+            height: 70px;
+       // }
+    }
+}
+
+.text {
+    &--error{
+        color: $cError;
+    }
+    &--success{
+        color: $cSuccess;
+    }
+}
+.error-text{
+    color: $cError;
+}
+.success-text{
+    color: $cSuccess;
+}
+
+.button{
+    &--middle{
+        height: $sMiddleButton;
+    }
+}

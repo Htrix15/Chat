@@ -1,5 +1,3 @@
-@import "../../../assets/styles/colors.scss";
-
 .card{
     width: 500px;
     height: 500px;
@@ -9,21 +7,4 @@
     margin-left: -250px;
     margin-top: -250px; 
     box-sizing: border-box; 
-}
-
-.group-inputs{
-    &--space-between{
-        display: flex;
-        justify-content: space-between;
-        &:nth-child(odd){
-            height: 70px;
-        }
-    }
-}
-
-.error-text{
-    color: $cError;
-}
-.success-text{
-    color: $cSuccess;
 }

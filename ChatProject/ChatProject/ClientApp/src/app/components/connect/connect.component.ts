@@ -12,8 +12,6 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { MessagesService } from 'src/app/services/messages.service';
 import { MyMessage } from 'src/app/services-classes/my-message';
 import { MatStep } from '@angular/material/stepper';
-import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
-
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.component.html',
@@ -164,9 +162,6 @@ export class ConnectComponent implements OnInit, OnDestroy {
   
   parsError(error: HttpErrorResponse):void{
     if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-
-      this.messagesService.setMessage(new MyMessage(error.error.errors));
-      
       if(this.connectError){
         error.error.errors.forEach(err =>{
           this.connectErrorText+= err +' ';
@@ -180,7 +175,6 @@ export class ConnectComponent implements OnInit, OnDestroy {
       }
       
     } else {
-      this.messagesService.setMessage(new MyMessage('Что-то пошла не так'));
       if(this.connectError){
         this.connectErrorText = 'Что-то пошла не так';
       }

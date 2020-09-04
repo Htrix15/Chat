@@ -1,51 +1,97 @@
-<h2>Create chat</h2>
-<div>
+<mat-card class="card">   
+    <mat-card-title>Создать свой чат</mat-card-title>
+    <mat-vertical-stepper [linear]="true" #stepper >
 
-<form
-[formGroup] = inputChatOptions
-(ngSubmit) = "createChat()"
+        <mat-step [stepControl]="inputChatOptions" label="Данные чата">
 
->
-<mat-form-field>
-    <mat-label>Ваш ник</mat-label>
-    <input matInput placeholder="Nick" formControlName="nick">
-    <mat-error *ngIf="inputChatOptions.get('nick').errors && inputChatOptions.get('nick').touched"> 
-        От 3 символов
-    </mat-error>
-</mat-form-field>
+            <form
+            [formGroup] = inputChatOptions
+            (ngSubmit) = "checkNickThenCreateAndConnect()"
+            >
+                <div class="group-inputs--space-between">
+                    <mat-form-field>
+                        <mat-label>Ваш ник</mat-label>
+                        <input matInput placeholder="Nick" formControlName="nick">
+                        <mat-error 
+                            *ngIf="inputChatOptions.get('nick').errors && 
+                            inputChatOptions.get('nick').touched"
+                        > Можно 3-30 шт. латинских букв или цифр и некоторые символы
+                        </mat-error>
+                    </mat-form-field>
 
-    <mat-checkbox formControlName="rememberMe" labelPosition = "before">Запомнить меня</mat-checkbox>
+                    <mat-checkbox 
+                        formControlName="rememberMe" 
+                        labelPosition = "before"
+                    >Запомнить меня</mat-checkbox>
+                </div>
+                
+                
+                <div class="group-inputs--space-between">
 
-    <ng-container *ngIf="chatNotCreated">
+                    <mat-form-field>
+                        <mat-label>Название чата</mat-label>
+                        <input matInput placeholder="CoolChat" formControlName="chatName">
 
-        <mat-form-field>
-            <mat-label>Название чата</mat-label>
-            <input matInput placeholder="CoolChat" formControlName="chatName">
-            <mat-error *ngIf="inputChatOptions.get('chatName').errors && inputChatOptions.get('chatName').touched">
-                от 3 символов, только такие
-            </mat-error>
-        </mat-form-field>
+                        <mat-error 
+                            *ngIf="inputChatOptions.get('chatName').errors && 
+                            inputChatOptions.get('chatName').touched"   
+                        > Можно 3-30 шт. букв или цифр и некоторые символы
+                        </mat-error>
+                    </mat-form-field>
 
-        <mat-form-field>
-            <mat-label>Пароль (если хотите чтобы чат был приватный)</mat-label>
-            <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password" formControlName="password">
-            <mat-error *ngIf="inputChatOptions.get('password').errors && inputChatOptions.get('password').touched">
-                от 3 символов, только такие
-            </mat-error>
-            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-        </mat-form-field>   
-    </ng-container>
+                    <mat-form-field>
 
-    <button type="submit" 
-    mat-raised-button
-    color="accent"
-    [disabled]=
-            "inputChatOptions.invalid || 
-            !inputChatOptions.get('chatName').touched||
-            !inputChatOptions.get('nick').touched" 
-    >Создать и подключится</button>
-</form> 
+                        <mat-label>Пароль</mat-label>
+                        <input 
+                            matInput 
+                            [type]="hide ? 'text' : 'password'" 
+                            placeholder="Password" 
+                            formControlName="password"
+                        >
+                        <mat-hint 
+                            *ngIf="!inputChatOptions.get('password').errors" align="start"
+                        >Можно не указывать - чат будет открытый</mat-hint>
 
-</div>
+                        <mat-error 
+                            *ngIf="inputChatOptions.get('password').errors && 
+                            inputChatOptions.get('password').touched"
+                        >Можно 3-30 шт. букв или цифр и некоторые символы
+                        </mat-error>
+
+                        <button
+                            mat-icon-button 
+                            matSuffix 
+                            (click)="hide = !hide" 
+                            [attr.aria-label]="'Hide password'" 
+                            [attr.aria-pressed]="hide"
+                            ><mat-icon>{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+                        </button>
+
+                    </mat-form-field>   
+                </div>
+
+                <button type="submit" 
+                mat-raised-button
+                matStepperNext
+                color="accent"
+                [disabled]="inputChatOptions.invalid" 
+                >Создать и подключится</button>
+                
+            </form> 
+        </mat-step>
+
+        <mat-step label="Подключение" #checkStep>
+            <mat-spinner *ngIf="!createError; else showErrorText"></mat-spinner>
+
+            <ng-template #showErrorText>
+                <p class="text--error">{{createErrorText}}</p>
+                <button
+                mat-raised-button
+                matStepperPrevious
+                (click)="backToStep()"
+                >Назад</button>
+            </ng-template>
+        </mat-step>
+
+    </mat-vertical-stepper>
+</mat-card>

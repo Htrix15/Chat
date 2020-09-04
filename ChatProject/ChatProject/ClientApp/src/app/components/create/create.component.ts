@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { DataShell } from '../../models/data-shell'
 import { HttpErrorResponse } from '@angular/common/http';
@@ -10,6 +10,7 @@ import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MyMessage } from 'src/app/services-classes/my-message';
 import { MessagesService } from 'src/app/services/messages.service';
+import { MatStep } from '@angular/material/stepper';
 
 @Component({
     selector: 'app-create',
@@ -20,7 +21,7 @@ import { MessagesService } from 'src/app/services/messages.service';
 export class CreateComponent implements OnInit, OnDestroy{
 
     public inputChatOptions: FormGroup;
-    public chatNotCreated:boolean;
+
     private chatName: string;
     private nick: string;
     private password: string;
@@ -29,6 +30,12 @@ export class CreateComponent implements OnInit, OnDestroy{
     private createChatSubscribe: Subscription; 
     private checkNickSubscribe: Subscription; 
     private checkPasswordSubscribe: Subscription; 
+
+    @ViewChild('checkStep') checkStep: MatStep;
+    
+    public createError:boolean;
+    public createErrorText:string;
+
 
     constructor(
         private dataService:DataService, 
@@ -49,7 +56,6 @@ export class CreateComponent implements OnInit, OnDestroy{
                 ]),
             rememberMe: new FormControl(true)
         });
-        this.chatNotCreated = true;
     }
 
     ngOnInit(): void {
@@ -58,52 +64,10 @@ export class CreateComponent implements OnInit, OnDestroy{
           this.inputChatOptions.controls['nick'].setValue(nick);
           this.inputChatOptions.controls['nick'].markAsTouched();
         }
-      }
-
-    createChat():void{
-
-        this.chatName = this.inputChatOptions.controls['chatName']?.value;
-        this.nick = this.inputChatOptions.controls['nick']?.value;
-        this.password = this.inputChatOptions.controls['password']?.value;
-
-        if(this.chatNotCreated){
-            if(this.chatName && this.nick &&
-            TypeChecker.checkType<string>(this.chatName, 'length') &&
-            TypeChecker.checkType<string>(this.nick, 'length')){
-                
-                let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
-                let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, 1, new Date())  
-                this.createChatSubscribe = this.dataService.
-                postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
-                    (chatGroup:DataShell)=>{
-                        if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
-                            this.chatNotCreated = false;
-                            this.chatGroup = chatGroup.data;
-                            this.checkNick(this.chatGroup, this.nick, this.password);
-                        }
-                    },
-                    (err: HttpErrorResponse) => this.parsError(err)
-                );
-            } 
-        } else {
-            this.checkNick(this.chatGroup, this.nick, this.password);
-        }
     }
 
-    checkNick(chatGroup:ChatGroup, 
-        nick:string, 
-        password: string, 
-        ){
-            this.checkNickSubscribe = this.dataService
-            .getUserDatas('check-nick', new Map<string, string>().set('nick', nick))
-            .subscribe(
-                ()=>{
-                    let saveNick = this.inputChatOptions.controls['rememberMe']?.value;
-                    this.rememberMe(saveNick);
-                    this.connectionPreparation(chatGroup, nick, password);
-                },
-                (err: HttpErrorResponse) => this.parsError(err)
-            );  
+    backToStep(){
+        this.checkStep.interacted = false;
     }
 
     rememberMe(saveNick: boolean): void{
@@ -114,32 +78,84 @@ export class CreateComponent implements OnInit, OnDestroy{
         }
     }
 
-    connectionPreparation(chatGroup:ChatGroup, 
-        nick:string, 
-        password: string
-        ){
-            
-            if(!chatGroup.Private){
-                this.chatingService
-                .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
-            } else {
-                chatGroup.Password = password;
-                this.checkPasswordSubscribe = this.dataService.
-                postUserDatas<ChatGroup, DataShell>(chatGroup, 'check-password').subscribe(
-                    () => {
-                    this.chatingService
-                    .connectToChat(chatGroup.Id.toString(), nick, this.chatName);
-                    }, 
-                    (err: HttpErrorResponse) => this.parsError(err)
-                );
+    checkNickThenCreateAndConnect():void{
+        this.createError = false;
+        this.nick = this.inputChatOptions.controls['nick']?.value;
+
+        this.checkNickSubscribe = this.dataService
+        .getUserDatas('check-nick', new Map<string, string>().set('nick', this.nick))
+        .subscribe(
+            ()=>{
+                let saveNick = this.inputChatOptions.controls['rememberMe']?.value;
+                this.rememberMe(saveNick);
+                this.createChat();
+            },
+            (err: HttpErrorResponse) => {
+                this.createError = true;
+                this.createErrorText ='';
+                this.parsError(err);
             }
+        );  
+    }
+
+
+    createChat():void{
+        this.chatName = this.inputChatOptions.controls['chatName']?.value;
+        this.password = this.inputChatOptions.controls['password']?.value;
+
+        if(this.chatName && this.nick &&
+        TypeChecker.checkType<string>(this.chatName, 'length') &&
+        TypeChecker.checkType<string>(this.nick, 'length')){
+            
+            let privateChat = (this.password && TypeChecker.checkType<string>(this.password, 'length'))?true:false;
+            let newChat = new ChatGroup(1, this.chatName, privateChat, privateChat?this.password:null, 1, 1, new Date())  
+            this.createChatSubscribe = this.dataService.
+            postUserDatas<ChatGroup, DataShell>(newChat, 'create-chat').subscribe(
+                (chatGroup:DataShell)=>{
+                    if(chatGroup.data && TypeChecker.checkType<ChatGroup>(chatGroup.data, 'Private')){
+                        this.chatGroup = chatGroup.data;
+                        this.connectionToChat()
+                    }
+                },
+                (err: HttpErrorResponse) => {
+                    this.createError = true;
+                    this.createErrorText ='';
+                    this.parsError(err);
+                }
+            );
+        } 
+    }
+
+
+    connectionToChat()
+    {
+        if(!this.chatGroup.Private){
+            this.chatingService
+            .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
+        } else {
+            this.chatGroup.Password = this.password;
+            this.checkPasswordSubscribe = this.dataService.
+            postUserDatas<ChatGroup, DataShell>(this.chatGroup, 'check-password').subscribe(
+                () => {
+                this.chatingService
+                .connectToChat(this.chatGroup.Id.toString(), this.nick, this.chatName);
+                }, 
+                (err: HttpErrorResponse) => {
+                    this.createError = true;
+                    this.createErrorText ='';
+                    this.parsError(err);
+                }
+            );
+        }
     }
 
     parsError(error: HttpErrorResponse):void{
         if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-          this.messagesService.setMessage(new MyMessage(error.error.errors));
+            error.error.errors.forEach(err =>{
+                this.createErrorText+= err +' ';
+            })    
         } else {
-          this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
+            this.createErrorText = 'Что-то пошла не так';
         }
     } 
 
