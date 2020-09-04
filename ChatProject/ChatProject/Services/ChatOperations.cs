@@ -99,7 +99,7 @@ namespace ChatProject.Services
                             orderByDescending = _ => _.DateCreated;
                             break;}
                         case("activity"):{
-                            order = _ =>  _.MessageCount/(_.UserCount==0?1:_.UserCount);
+                            orderByDescending = _ =>  _.MessageCount/(_.UserCount==0?1:_.UserCount);
                             break;}
                     }
                 }
