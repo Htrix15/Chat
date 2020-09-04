@@ -55,7 +55,9 @@
 
         <mat-step label="Подключение" #connectStep>
 
-            <mat-spinner  *ngIf="!connectError && !successConnect"></mat-spinner>
+            <div class="content--center">
+                <mat-spinner  *ngIf="!connectError && !successConnect"></mat-spinner>
+            </div>
 
             <ng-container #showConnectErrorText *ngIf="connectError && !successConnect">
                 <p class="text--error">{{connectErrorText}}</p>
@@ -125,16 +127,18 @@
 
         <mat-step label="Проверка пароля" #checkPasswordStep>
 
-            <mat-spinner *ngIf="!passwordError; else showPasswordErrorText"></mat-spinner>
-
-            <ng-template #showPasswordErrorText>
+            <div class="content--center">
+                <mat-spinner *ngIf="!passwordError"></mat-spinner>
+            </div>
+            
+            <ng-container *ngIf="passwordError">
                 <p class="text--error">{{passwordErrorText}}</p>
                 <button
                 mat-raised-button
                 matStepperPrevious
                 (click)="backToStep()"
                 >Назад</button>
-            </ng-template>
+            </ng-container>
     
         </mat-step>
 

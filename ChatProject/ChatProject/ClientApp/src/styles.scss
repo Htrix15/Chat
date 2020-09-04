@@ -13,9 +13,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &--space-between{
         display: flex;
         justify-content: space-between;
-       // &:nth-child(odd){
-            height: 70px;
-       // }
+        height: 70px;
+    }
+}
+
+.content{
+    &--center{
+        display: flex;
+        justify-content: center;
+        margin-top: 10px
+    }
+    &--right{
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px
     }
 }
 

@@ -1,43 +1,98 @@
-<h2>Search Chat</h2>
-<div>
-<form 
-[formGroup] = searchForm
-(ngSubmit)="startSearch()">
+<mat-card class="card">   
+    <mat-card-title>Поиск чатов</mat-card-title>
+    <mat-horizontal-stepper [linear]="true" #stepper >
+        <mat-step [stepControl]="searchForm" label="Параметры поиска">
+            <form 
+            [formGroup] = searchForm
+            (ngSubmit)="startSearch()">
 
-    <mat-form-field>
-        <mat-label>Название чата</mat-label>
-        <input matInput placeholder="Cool Chat" formControlName="groupName">
-        <mat-error *ngIf="searchForm.invalid">
-            от 3 символов, только такие
-        </mat-error>
-    </mat-form-field>
+                <div class="group-inputs--space-between">
+                    <mat-form-field>
+                        <mat-label>Название чата</mat-label>
+                        <input matInput placeholder="Cool Chat" formControlName="groupName">
+                        <mat-error *ngIf="searchForm.invalid">
+                            Можно 3-30 шт. букв или цифр и некоторые символы
+                        </mat-error>
+                    </mat-form-field>
 
-    <mat-checkbox formControlName="onlyPublic" labelPosition = "before">Исключить приватные</mat-checkbox>
+                    <mat-checkbox formControlName="onlyPublic" labelPosition = "before">Исключить приватные</mat-checkbox>
+                </div>
 
-    <mat-form-field >  
-        <mat-label>Сортировать по</mat-label>
-        <mat-select formControlName = "order">
-            <mat-option value="name">Имя</mat-option>
-            <mat-option value="date">Дате создания</mat-option>
-            <mat-option value="user-count">Кол-во пользователей</mat-option>
-            <mat-option value="activity">Активность</mat-option>
-        </mat-select>
-    </mat-form-field>
+                <div class="group-inputs--space-between">
+                    <mat-form-field >  
+                        <mat-label>Сортировать по полю</mat-label>
+                        <mat-select formControlName = "order">
+                            <mat-option value="name">Имя</mat-option>
+                            <mat-option value="date">Дате создания</mat-option>
+                            <mat-option value="user-count">Кол-во пользователей</mat-option>
+                            <mat-option value="activity">Активность</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-    <mat-checkbox labelPosition = "before" formControlName="orderAsc">по возрастанию</mat-checkbox>
+                    <mat-checkbox labelPosition = "before" formControlName="orderAsc">Сортировка по возрастанию</mat-checkbox>
+                </div>
+                <div class="content--right">
+                    <button type="submit" 
+                    [disabled]="searchForm.invalid"
+                    mat-raised-button
+                    matStepperNext
+                    color="accent"
+                    >Поиск</button>
+                </div>
+            </form>
 
+        </mat-step>
 
-    <button type="submit" 
-    [disabled]="searchForm.invalid || !searchForm.get('groupName').touched"
-    mat-raised-button
-    color="accent"
-    >Поиск</button>
-</form>
+        <mat-step label="Результат поиска" #resultStep>
 
-<button *ngIf="showPagin" (click)="continueSearchAndSkip()">Еще</button>
+            <table mat-table [dataSource]="chatGroups" class="mat-elevation-z8" #resultTable>
 
-<ng-container *ngFor="let chatGroup of chatGroups">
-    <a [routerLink]="[ '/connect']" [queryParams]="{cg: chatGroup.Name}"> {{chatGroup.Name}}</a> 
-</ng-container>
+                <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef> Название </th>
+                    <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
+                </ng-container>
 
-</div>
+                <ng-container matColumnDef="Private">
+                    <th mat-header-cell *matHeaderCellDef> Приватная </th>
+                    <td mat-cell *matCellDef="let element"> {{(element.Private==true?'+':'-')}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="CountUser">
+                    <th mat-header-cell *matHeaderCellDef> Кол-во пользователей </th>
+                    <td mat-cell *matCellDef="let element"> {{element.UserCount}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Activities">
+                    <th mat-header-cell *matHeaderCellDef> Активность </th>
+                    <td mat-cell *matCellDef="let element"> {{(element.MessageCount/element.UserCount) | round}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="DataCreate">
+                    <th mat-header-cell *matHeaderCellDef> Дата создания </th>
+                    <td mat-cell *matCellDef="let element"> {{element.DateCreated | date:'MM/dd/yy, HH:mm'}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                class="row-chat-group"
+                (click)=goConnectToChat(row.Name)
+                ></tr>
+
+            </table>
+
+            <div class="content--center">
+                <mat-spinner *ngIf="!endSearch" ></mat-spinner>
+            </div>
+
+            <div class="content--right">
+                <button 
+                    *ngIf="showPagin && endSearch" 
+                    (click)="continueSearchAndSkip()"  
+                    mat-raised-button 
+                    color="accent"
+                >Еще</button>
+            </div>
+        </mat-step>
+
+    </mat-horizontal-stepper>
+</mat-card>

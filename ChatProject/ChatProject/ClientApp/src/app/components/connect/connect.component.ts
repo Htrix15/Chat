@@ -43,13 +43,15 @@ export class ConnectComponent implements OnInit, OnDestroy {
   public passwordErrorText:string;
 
   public successConnect:boolean;
+  public hide:boolean;
 
   constructor(
     private dataService:DataService, 
     private route: ActivatedRoute,
     private chatingService: ChatingService,
     private messagesService: MessagesService){
-
+      
+    this.hide = false;
     this.connectToChatForm = new FormGroup({
         chatName: new FormControl(null, 
           [ MyValidators.validateEmptyText(),

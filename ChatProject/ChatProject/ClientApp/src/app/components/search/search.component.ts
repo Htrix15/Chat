@@ -1,4 +1,4 @@
-﻿import { Component, OnDestroy } from '@angular/core';
+﻿import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ChatGroup } from 'src/app/models/chat-group';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
@@ -10,6 +10,8 @@ import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MyMessage } from 'src/app/services-classes/my-message';
 import { MessagesService } from 'src/app/services/messages.service';
+import { MatTable } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-search',
@@ -23,6 +25,7 @@ export class SearchComponent implements OnDestroy{
     public chatGroups: Array<ChatGroup>;
     private countSkipChatSearchPositions: number;
     public showPagin: boolean; 
+    public endSearch: boolean;
 
     private groupName: string; 
     private onlyPublic: boolean; 
@@ -31,9 +34,15 @@ export class SearchComponent implements OnDestroy{
 
     private searchChatesSubscribe: Subscription; 
 
+    public displayedColumns: Array<string>;
+
+    @ViewChild('resultTable') resultTable: MatTable<ChatGroup>
+
+    
     constructor(
         private dataService:DataService,
-        private messagesService: MessagesService
+        private messagesService: MessagesService,
+        private router: Router
     ){
         this.searchForm = new FormGroup({
             groupName: new FormControl(null, 
@@ -47,6 +56,7 @@ export class SearchComponent implements OnDestroy{
         this.countSkipChatSearchPositions = 0;
         this.showPagin = false;
         this.chatGroups = new Array<ChatGroup>();
+        this.displayedColumns = ['Name', 'Private', 'CountUser', 'Activities', 'DataCreate']
     }
 
     startSearch(){
@@ -60,6 +70,7 @@ export class SearchComponent implements OnDestroy{
     }
 
     continueSearchAndSkip(){
+        console.log(this.resultTable);
         this.preparationqQueryParams(this.countSkipChatSearchPositions, this.groupName, this.onlyPublic, this.order, this.orderAsc);
     }
 
@@ -81,10 +92,12 @@ export class SearchComponent implements OnDestroy{
     }
 
     private search(queryParams:Map<string,string>){ 
+        this.endSearch = false;
         this.searchChatesSubscribe = this.dataService
         .getUserDatas<DataShell>('search-chats', queryParams)
         .subscribe(
             (chatGroup:DataShell)=>{
+                this.endSearch = true;
                 if(chatGroup.datas && TypeChecker.checkType<Array<any>>(chatGroup.datas, 'length') && chatGroup.datas.length>0){
                     let countResult = 0;
                     chatGroup.datas.forEach(
@@ -95,12 +108,14 @@ export class SearchComponent implements OnDestroy{
                             }
                         }
                     );
+                    this.resultTable.renderRows();
                     if(countResult>=environment.stepSkipChatSearchPositions){
                         this.countSkipChatSearchPositions+=environment.stepSkipChatSearchPositions;
                         this.showPagin = true;
                     } else {
                         this.showPagin = false;
                     }
+                
                 } else {
                     this.searchForm.reset();
                     this.messagesService.setMessage(new MyMessage('Ничего не найдено', false));
@@ -121,6 +136,10 @@ export class SearchComponent implements OnDestroy{
           this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
         }
     } 
+
+    goConnectToChat(chatName:string){
+        this.router.navigate(['/connect'], { queryParams: { cg: chatName }});
+    }
 
     ngOnDestroy(): void {
        if(this.searchChatesSubscribe){this.searchChatesSubscribe.unsubscribe();}

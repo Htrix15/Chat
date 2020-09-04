@@ -12,7 +12,7 @@ export class ChatingService {
   private hubConnection: HubConnection;
   private chatName: string;
 
-  constructor( private router: Router,) { }
+  constructor(private router: Router) { }
 
   checkChat():boolean{
     if(this.hubConnection){

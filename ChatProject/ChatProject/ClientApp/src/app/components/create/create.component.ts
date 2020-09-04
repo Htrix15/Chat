@@ -35,12 +35,14 @@ export class CreateComponent implements OnInit, OnDestroy{
     
     public createError:boolean;
     public createErrorText:string;
-
+    public hide:boolean;
 
     constructor(
         private dataService:DataService, 
         private chatingService: ChatingService,
-        private messagesService: MessagesService){
+        private messagesService: MessagesService)
+        {
+            this.hide = false;
           this.inputChatOptions = new FormGroup({
             chatName: new FormControl(null, 
                 [ MyValidators.validateEmptyText(),

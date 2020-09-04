@@ -14,8 +14,12 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatTableModule} from '@angular/material/table';
+import {MathRoundPipe} from '../pipes/math-round.pipe'
+
 @NgModule({
   declarations: [ 
+    MathRoundPipe
   ],
   imports: [
       CommonModule,
@@ -31,7 +35,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
       MatSidenavModule,
       MatExpansionModule,
       MatStepperModule,
-      MatProgressSpinnerModule
+      MatProgressSpinnerModule,
+      MatTableModule,
   ],
   providers:[
       [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
@@ -50,7 +55,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
       MatSidenavModule,
       MatExpansionModule,
       MatStepperModule,
-      MatProgressSpinnerModule
+      MatProgressSpinnerModule,
+      MatTableModule,
+      MathRoundPipe
   ]
 })
 export class SharedModule { }

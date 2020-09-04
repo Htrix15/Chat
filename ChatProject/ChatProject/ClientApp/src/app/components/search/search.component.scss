@@ -1,3 +1,22 @@
-﻿div{
-    background-color: gray;
+﻿@import "../../../assets/styles/colors.scss";
+@import "../../../assets/styles/sizes";
+
+.card{
+    width: 700px;
+    left: 50%;
+    margin-left: -350px;
+    box-sizing: border-box; 
+}
+
+tr.row-chat-group:hover {
+    background: $cMainLite;
+}
+
+table{
+    width: 100%;
+    text-align: center;
+}
+
+th.mat-header-cell {
+    text-align: center;
 }
