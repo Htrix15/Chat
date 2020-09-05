@@ -6,9 +6,6 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-
-
-
 .group-inputs{
     &--space-between{
         display: flex;
@@ -48,5 +45,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .button{
     &--middle{
         height: $sMiddleButton;
+    }
+}
+
+.snackBar{
+    text-align: center;
+    font-size: medium;
+    &--error{
+        @extend .snackBar;
+        background-color: $cError;
+        color: white;
     }
 }

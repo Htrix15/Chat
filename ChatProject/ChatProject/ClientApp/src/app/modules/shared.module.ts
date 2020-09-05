@@ -15,6 +15,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTableModule} from '@angular/material/table';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 import {MathRoundPipe} from '../pipes/math-round.pipe'
 
 @NgModule({
@@ -37,6 +40,8 @@ import {MathRoundPipe} from '../pipes/math-round.pipe'
       MatStepperModule,
       MatProgressSpinnerModule,
       MatTableModule,
+      MatSlideToggleModule,
+      MatSnackBarModule
   ],
   providers:[
       [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
@@ -57,6 +62,8 @@ import {MathRoundPipe} from '../pipes/math-round.pipe'
       MatStepperModule,
       MatProgressSpinnerModule,
       MatTableModule,
+      MatSlideToggleModule,
+      MatSnackBarModule,
       MathRoundPipe
   ]
 })

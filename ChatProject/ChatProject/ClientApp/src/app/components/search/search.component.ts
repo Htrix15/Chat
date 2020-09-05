@@ -12,7 +12,8 @@ import { MyMessage } from 'src/app/services-classes/my-message';
 import { MessagesService } from 'src/app/services/messages.service';
 import { MatTable } from '@angular/material/table';
 import { Router } from '@angular/router';
-
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {SnackBarComponent} from '../snack-bar/snack-bar.component'
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
@@ -42,7 +43,8 @@ export class SearchComponent implements OnDestroy{
     constructor(
         private dataService:DataService,
         private messagesService: MessagesService,
-        private router: Router
+        private router: Router,
+        private snackBar: MatSnackBar
     ){
         this.searchForm = new FormGroup({
             groupName: new FormControl(null, 
@@ -129,12 +131,22 @@ export class SearchComponent implements OnDestroy{
 
 
     parsError(error: HttpErrorResponse):void{
+        this.endSearch = true;
+        let searchErrorText ="";
+    
         if(TypeChecker.checkType<DataShell>(error.error, 'result')){
-          this.messagesService.setMessage(new MyMessage(error.error.errors));
-          this.showPagin = false;
+            error.error.errors.forEach(err =>{
+                searchErrorText+= err +' ';
+            }) 
+            let message =new MyMessage(searchErrorText);
+            this.snackBar.openFromComponent(SnackBarComponent,
+                {duration:5000, data: message, panelClass: message.error?'snackBar--error':'snackBar'} );
         } else {
-          this.messagesService.setMessage(new MyMessage('Что-то пошла не так'))
+            this.snackBar.openFromComponent(SnackBarComponent,
+                {duration:5000, data: new MyMessage('Что-то пошла не так'),  panelClass:'snackBar--error'} );
+
         }
+        this.showPagin = false;
     } 
 
     goConnectToChat(chatName:string){
