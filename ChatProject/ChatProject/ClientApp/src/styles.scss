@@ -48,6 +48,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     }
 }
 
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; } 
+    }   
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; } 
+  }
+  
 .snackBar{
     text-align: center;
     font-size: medium;
@@ -56,4 +66,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
         background-color: $cError;
         color: white;
     }
+}
+
+mat-card.chat-message{
+
+    &--service{
+        background-color:$cNeutral;
+    }
+    &--error{
+        background-color:$cError;
+    }
+    &--all{
+        max-width: 80%;
+        background-color: $cMainLite;
+    }
+    &--your{
+        max-width: 80%;
+        background-color: $cMainLite;
+    }
+    
 }

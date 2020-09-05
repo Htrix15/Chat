@@ -52,10 +52,14 @@ export class ChatingService {
   disconnected():Observable<boolean>{
     return new Observable<boolean>(
       sub => {
-        this.hubConnection.stop() 
-        .then(this.hubConnection = null)
-        .then(()=>sub.next(true))
-        .catch(()=>sub.error(false));
+        if(this.hubConnection){
+          this.hubConnection.stop() 
+          .then(this.hubConnection = null)
+          .then(()=>sub.next(true))
+          .catch(()=>sub.error(false));
+        } else{
+          sub.next(true);
+        }
     })
   }
 

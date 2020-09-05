@@ -1,36 +1,68 @@
-<h2>CHAT</h2>
-<small>Ссылка для подключения: {{thisChatUrl}}</small>
+<mat-card class="card">  
+    <mat-card-title>Чат {{chatName}}</mat-card-title> 
+    <!-- <mat-card-subtitle>Ссылка для подключения: {{thisChatUrl}} </mat-card-subtitle> -->
+    <button 
+    mat-stroked-button
+        [cdkCopyToClipboard] = thisChatUrl
+    >Скопировать ссылку для подключения</button>
 
-<mat-card  *ngFor="let chatMessage of chatMessages">
-    <mat-card-subtitle>
-        {{chatMessage.nick}} 
-    </mat-card-subtitle>
-    <mat-card-content>
-        <p> {{chatMessage.text}}</p>
-    </mat-card-content>
+    <div class="chat">
+        <div class="messages-box">
+
+            <div 
+                [ngClass]="{
+                    'messages-box__message--all': chatMessage.type == 'all',
+                    'messages-box__message--your': chatMessage.type == 'your',
+                    'messages-box__message--service': chatMessage.type == 'service' ||  chatMessage.type == 'error'
+                }"
+                *ngFor="let chatMessage of chatMessages">
+                
+                <mat-card
+                [ngClass]="{
+                    'chat-message--all': chatMessage.type == 'all',
+                    'chat-message--your': chatMessage.type == 'your',
+                    'chat-message--service': chatMessage.type == 'service',
+                    'chat-message--error': chatMessage.type == 'error'
+                }"
+                >
+                    <mat-card-subtitle>
+                        {{chatMessage.nick}} 
+                    </mat-card-subtitle>
+                    <mat-card-content>
+                        {{chatMessage.text}}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+        </div>
+
+        <form
+        [formGroup] = inputMessageForm
+        (ngSubmit)="onPush()">
+
+            <mat-form-field>    
+                <mat-label>Ваше сообщение</mat-label>
+                <textarea #inputText matInput formControlName="textMessage"  
+                    (keyup.shift.enter)="onPush()" class="test"></textarea>
+                <mat-error *ngIf="inputMessageForm.invalid">Непустой текст до {{maxChatTextLength}}</mat-error>
+                <mat-hint *ngIf="!inputMessageForm.invalid" align="start">shift + enter - отправить сообщение</mat-hint>
+                <mat-hint align="end"> {{inputText.value.length}} / {{maxChatTextLength}}</mat-hint>
+            </mat-form-field>
+                
+            <button 
+            type="submit" 
+            [disabled]="inputMessageForm.invalid"
+            mat-raised-button
+            color="accent"
+            >Отправить</button>
+            
+        </form>
+    </div>
 </mat-card>
 
-<div>
-<form
-[formGroup] = inputMessageForm
-(ngSubmit)="onPush()">
-    <mat-form-field>    
-        <mat-label>Ваше сообщение</mat-label>
-        <textarea #inputText matInput formControlName="textMessage"  (keyup.shift.enter)="onPush()"></textarea>
-        <mat-error *ngIf="inputMessageForm.invalid && !inputMessageForm.get('textMessage').touched">Непустой текст до {{maxChatTextLength}}</mat-error>
-        <mat-hint *ngIf="!inputMessageForm.invalid" align="start">shift + enter - отправить сообщение</mat-hint>
-        <mat-hint align="end"> {{inputText.value.length}} / {{maxChatTextLength}}</mat-hint>
-    </mat-form-field>
-        
-    <button 
-    type="submit" 
-    [disabled]="inputMessageForm.invalid"
-    mat-raised-button
-    color="accent"
-   
-    >"Отправить"</button>
-      
-</form>
+<div class="down-button" appCheckScroll
+    [checkScrollValue]=70>
+    <button mat-fab color="primary" (click)="goDown()">
+        <mat-icon>arrow_downward</mat-icon>
+    </button>
 </div>
-
-

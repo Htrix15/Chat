@@ -1,7 +1,9 @@
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-
 import { CommonModule, LocationStrategy, PathLocationStrategy } from "@angular/common";
+
+import {MathRoundPipe} from '../pipes/math-round.pipe'
+import {CheckScrollDirective} from '../directives/check-scroll.directive'
 
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -17,12 +19,14 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatTableModule} from '@angular/material/table';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatChipsModule} from '@angular/material/chips';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
-import {MathRoundPipe} from '../pipes/math-round.pipe'
 
 @NgModule({
   declarations: [ 
-    MathRoundPipe
+    MathRoundPipe,
+    CheckScrollDirective
   ],
   imports: [
       CommonModule,
@@ -41,7 +45,9 @@ import {MathRoundPipe} from '../pipes/math-round.pipe'
       MatProgressSpinnerModule,
       MatTableModule,
       MatSlideToggleModule,
-      MatSnackBarModule
+      MatSnackBarModule,
+      MatChipsModule,
+      ClipboardModule
   ],
   providers:[
       [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
@@ -64,7 +70,10 @@ import {MathRoundPipe} from '../pipes/math-round.pipe'
       MatTableModule,
       MatSlideToggleModule,
       MatSnackBarModule,
-      MathRoundPipe
+      MatChipsModule,
+      MathRoundPipe,
+      CheckScrollDirective,
+      ClipboardModule
   ]
 })
 export class SharedModule { }

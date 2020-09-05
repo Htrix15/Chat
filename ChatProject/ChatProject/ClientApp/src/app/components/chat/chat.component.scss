@@ -1,4 +1,60 @@
-﻿
-div{
-    background-color: gray;
+﻿@import "../../../assets/styles/colors.scss";
+
+.card{
+    width: 500px;
+    position: relative;
+    z-index: 10;
+    left: 50%;
+    margin-left: -250px;
+    box-sizing: border-box; 
+}
+.chat{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 400px;
+    justify-content: flex-end;
+    .messages-box{
+        width: 100%;
+        flex-direction: column;
+        &__message{
+            display: flex;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            &--your{
+                @extend .messages-box__message;
+                justify-content: flex-end;
+            }
+            &--service{
+                @extend .messages-box__message;
+                justify-content: center;
+            }
+            &--all{
+                @extend .messages-box__message;
+                justify-content: flex-start;
+            }
+        }
+    }
+    form{
+        display: flex;
+        justify-content: space-between;
+        mat-form-field{
+            width: 70%;
+            textarea{
+                resize: none;
+                height: 100px;
+            }
+        }
+    }
+}
+
+.down-button{
+    display: none;
+    position: fixed;
+    top: 100%;
+    margin-top: -100px;
+    left: 2%;
+    z-index: 5;
+    animation: fadein 0.5s;
 }
