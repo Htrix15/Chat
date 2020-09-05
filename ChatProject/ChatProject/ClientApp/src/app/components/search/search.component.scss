@@ -4,12 +4,14 @@
 .card{
     width: 700px;
     left: 50%;
+    margin-top: 10px;
     margin-left: -350px;
     box-sizing: border-box; 
 }
 
 tr.row-chat-group:hover {
     background: $cMainLite;
+    cursor: pointer;
 }
 
 table{
