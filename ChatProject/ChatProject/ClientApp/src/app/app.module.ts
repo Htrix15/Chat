@@ -7,9 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DataService } from './services/data.service'
 import { ChatingService} from './services/chating.service'
 import { SharedModule} from './modules/shared.module'
-import { MessagesService } from './services/messages.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { MathRoundPipe } from './pipes/math-round.pipe';
 
 
 @NgModule({
@@ -25,8 +23,7 @@ import { MathRoundPipe } from './pipes/math-round.pipe';
   ],
   providers: [
     DataService,
-    ChatingService,
-    MessagesService
+    ChatingService
   ],
   bootstrap: [AppComponent]
 })

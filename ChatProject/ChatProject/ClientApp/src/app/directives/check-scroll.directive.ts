@@ -1,5 +1,4 @@
 import { Directive, HostListener, Input, ElementRef } from '@angular/core';
-import { timeStamp } from 'console';
 
 @Directive({
   selector: '[appCheckScroll]'

@@ -1,9 +1,10 @@
 @import "../assets/styles/colors.scss";
+@import "../assets//styles//sizes";
 
 .header{
     border-radius: 0%;
     position:fixed;
-    z-index: 100;
+    z-index: $zIndexHeader;
     width: 100%;
     background-color: $cMainLite;
 }
@@ -15,21 +16,24 @@
         text-align: center;
         position: absolute;
         top: 50%;
-        left: 50% ;
-        margin-top: - 170px;
-        margin-left: - 225px;
+        left: 50%;
+        height: $sCardMinWidth;
+        width: $sCardMiddleWidth;
+        margin-top: - $sCardMinWidth/2 + $sHeader;
+        margin-left: - $sCardMiddleWidth/2;
         button{
-            margin: 0px 10px;
-            width: 130px;
+            margin: 0px $sMarginMiddle;
+            width: $sButtonBig;
         }
     }
 }
+
 .header-margin{
-    height: 48px;
+    height: $sHeader;
 }
 
 span{
-    color: white;
+    color: $cLite;
     font-size: large;
     -webkit-animation: fadein 1s;
     animation: fadein 1s;

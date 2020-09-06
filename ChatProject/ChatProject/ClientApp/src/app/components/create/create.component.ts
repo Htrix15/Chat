@@ -8,8 +8,6 @@ import { ChatingService } from '../../services/chating.service';
 import { TypeChecker} from '../../services-classes/type-checker'
 import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { MyMessage } from 'src/app/services-classes/my-message';
-import { MessagesService } from 'src/app/services/messages.service';
 import { MatStep } from '@angular/material/stepper';
 
 @Component({
@@ -39,11 +37,10 @@ export class CreateComponent implements OnInit, OnDestroy{
 
     constructor(
         private dataService:DataService, 
-        private chatingService: ChatingService,
-        private messagesService: MessagesService)
+        private chatingService: ChatingService)
         {
             this.hide = false;
-          this.inputChatOptions = new FormGroup({
+            this.inputChatOptions = new FormGroup({
             chatName: new FormControl(null, 
                 [ MyValidators.validateEmptyText(),
                   Validators.pattern('^[а-яА-ЯёЁa-zA-Z0-9 -+=_\?\!\(\)\<\>]{3,30}$')

@@ -46,7 +46,10 @@ export class ChatingService {
       () => {
           console.log('connection success');
           this.router.navigate(['/chat',chatId])},
-      () => console.log('connection failed'))
+      () => {
+          console.log('connection failed')
+          this.router.navigate(['/error'])}
+      )
   }
   
   disconnected():Observable<boolean>{

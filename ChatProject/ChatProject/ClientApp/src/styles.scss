@@ -10,7 +10,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &--space-between{
         display: flex;
         justify-content: space-between;
-        height: 70px;
+        height: $sGroupInputsHeight;
     }
 }
 
@@ -18,12 +18,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &--center{
         display: flex;
         justify-content: center;
-        margin-top: 10px
+        margin-top: $sMarginMiddle;
     }
     &--right{
         display: flex;
         justify-content: flex-end;
-        margin-top: 10px
+        margin-top: $sMarginMiddle;
     }
 }
 
@@ -36,10 +36,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     }
 }
 
-
 .button{
     &--middle{
-        height: $sMiddleButton;
+        height: $sButtonMiddle;
     }
 }
 
@@ -59,7 +58,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &--error{
         @extend .snackBar;
         background-color: $cError;
-        color: white;
+        color: $cLite;
     }
 }
 

@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
 import { MyValidators } from 'src/app/services-classes/my-validators';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MyMessage } from 'src/app/services-classes/my-message';
-import { MessagesService } from 'src/app/services/messages.service';
 import { MatTable } from '@angular/material/table';
 import { Router } from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -42,7 +41,6 @@ export class SearchComponent implements OnDestroy{
     
     constructor(
         private dataService:DataService,
-        private messagesService: MessagesService,
         private router: Router,
         private snackBar: MatSnackBar
     ){
@@ -89,7 +87,7 @@ export class SearchComponent implements OnDestroy{
             }
             this.search(queryParams);
         } else {
-            this.messagesService.setMessage(new MyMessage('Пустое название чата', false));
+            this.showMessage(new MyMessage('Нельзя пустое название чата'));
         }
     }
 
@@ -120,7 +118,7 @@ export class SearchComponent implements OnDestroy{
                 
                 } else {
                     this.searchForm.reset();
-                    this.messagesService.setMessage(new MyMessage('Ничего не найдено', false));
+                    this.showMessage(new MyMessage('Ничего не найденно',false));
                     this.showPagin = false;
                 }
             },
@@ -139,18 +137,20 @@ export class SearchComponent implements OnDestroy{
                 searchErrorText+= err +' ';
             }) 
             let message =new MyMessage(searchErrorText);
-            this.snackBar.openFromComponent(SnackBarComponent,
-                {duration:5000, data: message, panelClass: message.error?'snackBar--error':'snackBar'} );
+            this.showMessage(message); 
         } else {
-            this.snackBar.openFromComponent(SnackBarComponent,
-                {duration:5000, data: new MyMessage('Что-то пошла не так'),  panelClass:'snackBar--error'} );
-
+            this.showMessage(new MyMessage('Что-то пошла не так'));
         }
         this.showPagin = false;
     } 
 
     goConnectToChat(chatName:string){
         this.router.navigate(['/connect'], { queryParams: { cg: chatName }});
+    }
+
+    showMessage(message: MyMessage){
+        this.snackBar.openFromComponent(SnackBarComponent,
+            {duration:5000, data: message, panelClass: message.error?'snackBar--error':'snackBar'} );
     }
 
     ngOnDestroy(): void {

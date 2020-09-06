@@ -1,10 +1,12 @@
+@import "../../../assets/styles/sizes";
+
 .card{
-    width: 500px;
-    height: 500px;
+    width: $sCardMiddleWidth;
+    width: $sCardMiddleWidth;
     position: fixed;
     top: 50%;
     left: 50%;
-    margin-left: -250px;
-    margin-top: -250px; 
+    margin-left: -$sCardMiddleWidth/2;
+    margin-top: -$sCardMiddleWidth/2; 
     box-sizing: border-box; 
 }

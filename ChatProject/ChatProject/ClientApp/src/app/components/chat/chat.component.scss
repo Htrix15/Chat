@@ -1,19 +1,21 @@
 ﻿@import "../../../assets/styles/colors.scss";
+@import "../../../assets/styles/sizes";
 
 .card{
-    width: 500px;
+    width: $sCardMiddleWidth;
     position: relative;
-    z-index: 10;
+    z-index: $zIndexChat;
     left: 50%;
-    margin-left: -250px;
-    margin-top: 10px;
+    margin-left: -$sCardMiddleWidth/2;
+    margin-top: $sMarginMiddle;
     box-sizing: border-box; 
 }
+
 .chat{
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 400px;
+    min-height: $sChatMinHeight;
     justify-content: flex-end;
     .messages-box{
         width: 100%;
@@ -21,8 +23,8 @@
         &__message{
             display: flex;
             width: 100%;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: $sMarginMiddle;
+            margin-bottom: $sMarginMiddle;
             &--your{
                 @extend .messages-box__message;
                 justify-content: flex-end;
@@ -44,7 +46,7 @@
             width: 70%;
             textarea{
                 resize: none;
-                height: 100px;
+                height: $sChatInputsHeight;
             }
         }
     }
@@ -54,8 +56,8 @@
     display: none;
     position: fixed;
     top: 100%;
-    margin-top: -100px;
+    margin-top: -$sMarginDownButton;
     left: 2%;
-    z-index: 5;
+    z-index: $zIndexDownButton;
     animation: fadein 0.5s;
 }

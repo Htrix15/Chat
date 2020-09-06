@@ -2,10 +2,10 @@
 @import "../../../assets/styles/sizes";
 
 .card{
-    width: 700px;
+    width: $sCardBigWidth;
     left: 50%;
-    margin-top: 10px;
-    margin-left: -350px;
+    margin-top: $sMarginMiddle;
+    margin-left: -$sCardBigWidth/2;
     box-sizing: border-box; 
 }
 
