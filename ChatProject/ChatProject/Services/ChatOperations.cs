@@ -1,13 +1,6 @@
-using System.Dynamic;
-using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
 using ChatProject.Interfaces;
 using ChatProject.Models;
 using ChatProject.ServicesClasses;
@@ -25,7 +18,7 @@ namespace ChatProject.Services
             _supportingMethods = supportingMethods;
         }
 
-        public virtual async Task<DataShell> CheckGroupAsync(IQueryCollection requestParams)
+        public async Task<DataShell> CheckGroupAsync(IQueryCollection requestParams)
         {
             var result = new DataShell();
             var groupName = requestParams["groupName"].ToString();
@@ -42,7 +35,7 @@ namespace ChatProject.Services
             return result;
         }
 
-        public virtual async Task<DataShell> CheckPasswordAsync(IValidator chatGroup)
+        public async Task<DataShell> CheckPasswordAsync(IValidator chatGroup)
         {  
             var result = new DataShell();
             var _chatGroup = chatGroup as ChatGroup;
@@ -59,7 +52,7 @@ namespace ChatProject.Services
     
             return result;   
         }
-        public virtual async Task<DataShell> SearchChatsAsync(IQueryCollection requestParams){
+        public async Task<DataShell> SearchChatsAsync(IQueryCollection requestParams){
             var result = new DataShell();
             var searchGroupName = requestParams["groupName"].ToString();
             var onlyPublic = Convert.ToBoolean(requestParams["onlyPublic"]);
@@ -131,7 +124,7 @@ namespace ChatProject.Services
             return result;
         }
 
-        public virtual async Task<DataShell> IncrementUserCount(string id){
+        public async Task<DataShell> IncrementUserCount(string id){
             int chatId = Convert.ToInt32(id);
             var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
                 predicates: _ => _.Id == chatId,
@@ -142,7 +135,7 @@ namespace ChatProject.Services
             }
             return new DataShell();
         }
-        public virtual async Task<DataShell> DecrementUserCount(string id){
+        public async Task<DataShell> DecrementUserCount(string id){
             int chatId = Convert.ToInt32(id);
             var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
                 predicates: _ => _.Id == chatId,
@@ -158,7 +151,7 @@ namespace ChatProject.Services
             return new DataShell();
         }
 
-        public virtual async Task<DataShell> IncrementMessageCount(string id){
+        public async Task<DataShell> IncrementMessageCount(string id){
             int chatId = Convert.ToInt32(id);
             var thisGroup = (await _db.SelectAsync<ChatGroup, ChatGroup, int>(
                 predicates: _ => _.Id == chatId,
@@ -170,7 +163,7 @@ namespace ChatProject.Services
             return new DataShell();
         }
 
-        public virtual async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
+        public async Task<DataShell> AddChatGroupAsync(IValidator chatGroup)
         {  
             var result = new DataShell();
             var _chatGroup =  chatGroup as ChatGroup;

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using ChatProject.ServicesClasses;
 using ChatProject.Models;
 namespace ChatProject.Interfaces
 {
@@ -8,7 +7,5 @@ namespace ChatProject.Interfaces
         DataShell Validate(IQueryCollection requestParams) => new DataShell("invalid type");
         DataShell Validate(string requestParams) => new DataShell("invalid type");
         DataShell Validate() => new DataShell("invalid type");
-        // DataShell Validate(IHeaderDictionary headers) => new DataShell("invalid type");
-        //  DataShell Validate(IQueryCollection requestParams, IFormCollection formData) => new DataShell("invalid type");
     }
 }

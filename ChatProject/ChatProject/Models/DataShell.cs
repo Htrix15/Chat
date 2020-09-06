@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using System;
 using ChatProject.Interfaces;
 
 namespace ChatProject.Models

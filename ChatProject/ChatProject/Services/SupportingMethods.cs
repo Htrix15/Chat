@@ -7,7 +7,7 @@ namespace ChatProject.Services
 {
     public class SupportingMethods
     {
-        public virtual string GetHashString(string password)
+        public  string GetHashString(string password)
         {
             MD5 md5Hash = MD5.Create();
             byte[] salt = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password));

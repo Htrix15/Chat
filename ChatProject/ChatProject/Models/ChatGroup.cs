@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using ChatProject.Interfaces;
+﻿using ChatProject.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using ChatProject.ServicesClasses;
 using System.Text.RegularExpressions;
 
 namespace ChatProject.Models

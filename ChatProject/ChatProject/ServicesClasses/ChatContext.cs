@@ -51,22 +51,22 @@ namespace ChatProject.ServicesClasses
             return result;
         }
 
-        public virtual Task<DataShell> UpdateAsync<TEntity>(TEntity data) where TEntity : class
+        public  Task<DataShell> UpdateAsync<TEntity>(TEntity data) where TEntity : class
         {
             return DataChangeAsync<TEntity>(data, EntityState.Modified);
         }
 
-        public virtual Task<DataShell> DeleteAsync<TEntity>(TEntity data) where TEntity : class
+        public  Task<DataShell> DeleteAsync<TEntity>(TEntity data) where TEntity : class
         {
             return DataChangeAsync<TEntity>(data, EntityState.Deleted);
         }
 
-        public virtual Task<DataShell> InsertAsync<TEntity>(TEntity data) where TEntity : class
+        public  Task<DataShell> InsertAsync<TEntity>(TEntity data) where TEntity : class
         {
             return DataChangeAsync<TEntity>(data, EntityState.Added);
         }
 
-        public async virtual Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey>(
+        public async  Task<IEnumerable<TResult>> SelectAsync<TEntity, TResult, TKey>(
             Expression<Func<TEntity, TResult>> selector = null, 
             int skip = -1, 
             int take = -1,

@@ -6,7 +6,6 @@ using ChatProject.Services;
 using ChatProject.Validators;
 using ChatProject.Validators.Rules.StringTypeCheck;
 using ChatProject.Validators.Rules;
-using System.Linq;
 
 namespace ChatProject.Hubs
 {

@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ChatProject.Models;
-using ChatProject.Interfaces;
 using ChatProject.Services;
 using ChatProject.Validators;
 using ChatProject.Validators.Rules.QueryParamsCheck;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using ChatProject.ServicesClasses;
 using ChatProject.Models;
 
 namespace ChatProject.Interfaces

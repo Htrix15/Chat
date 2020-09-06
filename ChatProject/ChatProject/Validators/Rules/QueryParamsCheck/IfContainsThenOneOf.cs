@@ -1,8 +1,5 @@
 using ChatProject.Interfaces;
-using ChatProject.ServicesClasses;
 using Microsoft.AspNetCore.Http;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ChatProject.Validators.Rules.QueryParamsCheck
