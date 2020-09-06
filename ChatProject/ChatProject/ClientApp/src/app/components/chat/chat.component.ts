@@ -5,7 +5,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TypeChecker } from 'src/app/services-classes/type-checker';
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { MessagesService } from 'src/app/services/messages.service';
 import { MyMessage } from 'src/app/services-classes/my-message';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {SnackBarComponent} from '../snack-bar/snack-bar.component';
@@ -30,7 +29,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     
     constructor(
         private chatingService: ChatingService,
-        private messagesService: MessagesService,
         private snackBar: MatSnackBar
     ){
         this.maxChatTextLength = environment.maxChatTextLength;
@@ -46,9 +44,12 @@ export class ChatComponent implements OnInit, OnDestroy {
         .subscribe(
             (message:ChatMessage)=>{
                this.chatMessages.push(message);
-               setTimeout(() => { 
-                   document.scrollingElement.scrollTo(0, document.body.scrollHeight);
-                }, 10);
+               if((document.scrollingElement.scrollHeight - document.scrollingElement.scrollTop - document.scrollingElement.clientHeight)<=100){
+                setTimeout(() => { 
+                    document.scrollingElement.scrollTo(0, document.body.scrollHeight);
+                 }, 10);
+               }
+
             },
             ()=>{this.parsError();}
         );
